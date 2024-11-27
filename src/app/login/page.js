@@ -3,8 +3,8 @@ import LoginPage from '@/components/login-page'
 
 export default function Login() {
   return (
-    <AuthGuard>
+    // <AuthGuard>
         <LoginPage />
-    </AuthGuard>
+    // </AuthGuard>
   )
 }
