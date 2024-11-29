@@ -22,7 +22,7 @@ export default function FloatingNavbar() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, type: 'spring', stiffness: 120 }}
     >
-      <div className="w-full px-[10.15rem]">
+      <div className="w-full">
         <div className="backdrop-blur-md bg-gradient-to-r from-yellow-300 to-yellow-400 rounded-full shadow-lg dark:from-yellow-500 dark:to-yellow-600">
           <div className="px-14">
             <div className="flex items-center justify-between h-16">

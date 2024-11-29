@@ -30,87 +30,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { format, toZonedTime } from "date-fns-tz";
 import { getAllBlocks } from "@/actions/actions";
 
-// Mock data for recent blocks
-const recentBlocks = [
-  {
-    timestamp: "0",
-    previousHash: "",
-    hash: "1c564c3719dea31372731407f96b80bb0f8218efd77ac1027c44c001280b7095",
-    nonce: 0,
-    transactions: [
-      {
-        from: "GENESIS_BLOCK",
-        to: "049245c3867215b8f4277c15a9bffee568dc4f5cb2c393f4b1263780aa5a4df0640c036dd69a1c93e5c189a28cbc6781aa6b87dc25be27e5bea0f1bcf25be7efcb",
-        amount: 10000000,
-      },
-    ],
-  },
-  {
-    timestamp: "1731506490874",
-    previousHash:
-      "1c564c3719dea31372731407f96b80bb0f8218efd77ac1027c44c001280b7095",
-    hash: "0cc85cbddd1d5b5c2ddc1a7ad0671e0d242359041ee3bd70b7a35a7d3e3f9031",
-    nonce: 0,
-    transactions: [
-      {
-        from: "049245c3867215b8f4277c15a9bffee568dc4f5cb2c393f4b1263780aa5a4df0640c036dd69a1c93e5c189a28cbc6781aa6b87dc25be27e5bea0f1bcf25be7efcb",
-        to: "04f4d9c5052fd95916ab569b8bc173600faf8bd8f2afde9b7c982884e0526fde0544b2b6fea3cccd51ac08e4561a0b062892c1e9e15731a7fc11f06d094f028222",
-        amount: 1,
-        signature:
-          "304402202901fbb52f609e51c70cd1bde36a5abaedf092e354856bb27b824eb2ac0c92b3022061b43b78a2e3499e584d0783efdce383091e716911426f101a92b7e1b50f0a7c",
-      },
-    ],
-  },
-  {
-    timestamp: "1731506970481",
-    previousHash:
-      "0cc85cbddd1d5b5c2ddc1a7ad0671e0d242359041ee3bd70b7a35a7d3e3f9031",
-    hash: "09eddc33e0be4149dccc64b46a1453a6167db2f7ebbd2d00d716811f0c1ef093",
-    nonce: 20,
-    transactions: [
-      {
-        from: "049245c3867215b8f4277c15a9bffee568dc4f5cb2c393f4b1263780aa5a4df0640c036dd69a1c93e5c189a28cbc6781aa6b87dc25be27e5bea0f1bcf25be7efcb",
-        to: "04b86b037050c62010a7172fc8d920dd95e48fb6e8463bdc6e6e6fc23be11f51f5043073bb3c480f836fcb3d722a36abc6c3a46f203e3dacf07fcf88be7b823a11",
-        amount: 1,
-        signature:
-          "304502201a1f6f023bb9a1837b45c3b512a0ea63358fdbd969ede97140fc6fc4eb12ddc2022100c39677a79298df990275f9377d9e95e16e130fcd3192cd3507d1654fba4b522f",
-      },
-    ],
-  },
-  {
-    timestamp: "1731507640333",
-    previousHash:
-      "09eddc33e0be4149dccc64b46a1453a6167db2f7ebbd2d00d716811f0c1ef093",
-    hash: "08ca0ef675efea3f1b04cf6b219aa7082017866508918d55ded0cff3c7876d51",
-    nonce: 9,
-    transactions: [
-      {
-        from: "049245c3867215b8f4277c15a9bffee568dc4f5cb2c393f4b1263780aa5a4df0640c036dd69a1c93e5c189a28cbc6781aa6b87dc25be27e5bea0f1bcf25be7efcb",
-        to: "04270736cd3dc95b23de95cb59c64c5ebf3384a914eabcc18f69e28b4eae0659a4206741d9bc65e423fc01b4036c7ea3753c61270a1dc6c39c137a81847b524dc9",
-        amount: 1,
-        signature:
-          "3046022100d07d6c078ab97dde2ae985fa2dfc1b1dce36a829e5a0083fb1fafee86825763f02210093c76b037db4c03ebd3b0a76d472beb787c6fea0b679b595cc261508a2712c11",
-      },
-    ],
-  },
-  {
-    timestamp: "1731508160991",
-    previousHash:
-      "08ca0ef675efea3f1b04cf6b219aa7082017866508918d55ded0cff3c7876d51",
-    hash: "0012b4163db01599e82055567c032e0cbf6df25b39f956d4ccd7df0c0cf31cc9",
-    nonce: 20,
-    transactions: [
-      {
-        from: "04270736cd3dc95b23de95cb59c64c5ebf3384a914eabcc18f69e28b4eae0659a4206741d9bc65e423fc01b4036c7ea3753c61270a1dc6c39c137a81847b524dc9",
-        to: "eriqo-address",
-        amount: 1,
-        signature:
-          "3045022018b925a8cb4074a1edb44bcabeb7f9f98327d8745be05be1c145b71c66ee2e33022100827c54ca36f628f030e4607268a0f8791be91bf0a47d3df20ef9785bfad845fd",
-      },
-    ],
-  },
-];
-
 export default function Component() {
   const [selectedBlock, setSelectedBlock] = useState(null);
   const [selectedHeight, setSelectedHeight] = useState(null);
@@ -208,7 +127,7 @@ export default function Component() {
 
   return (
     <div className={`${isDarkMode ? "dark" : ""}`}>
-      <div className="container mx-auto p-4 space-y-6 transition-colors duration-200 ease-in-out dark:bg-gray-900 dark:text-white">
+      <div className="container mx-auto space-y-6 transition-colors duration-200 ease-in-out dark:text-white">
         <div className="flex justify-between items-center">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text">
             Blockchain Explorer
@@ -243,7 +162,7 @@ export default function Component() {
           <CardContent className="p-0">
             <div className="flex items-center h-12">
               <div className="flex-shrink-0 bg-black bg-opacity-30 h-full flex items-center px-4">
-                <span className="font-semibold">
+                <span className="font-semibold text-sm">
                   {isLoading == false && latestBlock !== null
                     ? "New Block Mined!"
                     : "Fetching Data"}
@@ -263,7 +182,7 @@ export default function Component() {
                     className="whitespace-nowrap"
                   >
                     {isLoading == false && latestBlock !== null ? (
-                      <div className="inline-flex items-center h-12 px-4 gap-8">
+                      <div className="inline-flex items-center h-12 px-4 gap-8 text-sm">
                         <span>Height: {currentBlocks.length - 1}</span>
                         <span>
                           Hash: {truncateString(latestBlock.hash, 30, 20)}
@@ -287,7 +206,7 @@ export default function Component() {
                         </span>
                       </div>
                     ) : (
-                      <div className="inline-flex items-center h-12 px-4 gap-8">
+                      <div className="inline-flex items-center h-12 px-4 gap-8 text-sm">
                         <span>Fetching new blocks every 5 seconds...</span>
                       </div>
                     )}
@@ -295,7 +214,7 @@ export default function Component() {
                 </AnimatePresence>
               </div>
               <div className="flex-shrink-0 bg-black bg-opacity-30 h-full flex items-center px-4">
-                <span className="font-semibold">{currentTime}</span>
+                <span className="font-semibold text-sm">{currentTime}</span>
               </div>
             </div>
           </CardContent>
