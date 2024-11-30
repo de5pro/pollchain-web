@@ -41,7 +41,7 @@ export function LandingPage() {
           </p>
           <Button
             className="bg-yellow-500 text-black text-lg px-8 py-6 rounded-full hover:bg-yellow-600 transition-colors"
-            onClick={() => router.push('/login?origin=vote')}>
+            onClick={() => router.push('/validate')}>
             Start Voting Now
             <ChevronRight className="ml-2 h-5 w-5" />
           </Button>

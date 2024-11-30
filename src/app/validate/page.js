@@ -1,7 +1,7 @@
-import FaceVerification from '@/components/face-verification'
+import ValidationPage from '@/components/validation-page'
 
 export default function ValidationPage() {
   return (
-    <FaceVerification />
+    <ValidationPage />
   )
 }
