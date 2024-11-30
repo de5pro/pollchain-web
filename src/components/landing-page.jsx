@@ -40,7 +40,8 @@ export function LandingPage() {
             Experience the future of campus democracy with our cutting-edge, tamper-proof voting system.
           </p>
           <Button
-            className="bg-yellow-500 text-black text-lg px-8 py-6 rounded-full hover:bg-yellow-600 transition-colors">
+            className="bg-yellow-500 text-black text-lg px-8 py-6 rounded-full hover:bg-yellow-600 transition-colors"
+            onClick={() => router.push('/login?origin=vote')}>
             Start Voting Now
             <ChevronRight className="ml-2 h-5 w-5" />
           </Button>

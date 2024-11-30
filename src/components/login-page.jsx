@@ -7,15 +7,16 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertCircle } from "lucide-react"
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/app/context/AuthContext'
 
-export default function LoginPage() {
+export default function LoginPage(props) {
   const [npm, setNpm] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const { login } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -27,7 +28,9 @@ export default function LoginPage() {
     }
 
     const success = await login(npm, password)
-    if (success) {
+    if (success && searchParams.get('origin') === 'vote') {
+      router.push('/vote')
+    } else if (success) {
       router.push('/dashboard')
     } else {
       setError('Invalid credentials')
