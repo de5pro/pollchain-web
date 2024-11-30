@@ -74,7 +74,9 @@ export function LandingPage() {
         <section className="text-center">
           <h2 className="text-3xl font-bold mb-8 text-black">Ready to revolutionize campus voting?</h2>
           <Button
-            className="bg-yellow-500 text-black text-lg px-8 py-6 rounded-full hover:bg-yellow-600 transition-colors">
+                className="bg-yellow-500 text-black text-lg px-8 py-6 rounded-full hover:bg-yellow-600 transition-colors"
+                onClick={() => router.push('/live')}
+            >
             Join the votcha! Revolution
           </Button>
         </section>

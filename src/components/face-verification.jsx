@@ -6,11 +6,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertCircle, Camera } from 'lucide-react'
 
-export default function FaceVerificationPage() {
+export default function FaceVerification() {
   const [capturedImage, setCapturedImage] = useState(null)
   const [error, setError] = useState('')
   const webcamRef = useRef(null)
-
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current.getScreenshot()
     setCapturedImage(imageSrc)
