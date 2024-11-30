@@ -76,11 +76,11 @@ export default function LoginPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">PIN</Label>
               <Input 
-                id="password" 
+                id="PIN" 
                 type="password" 
-                placeholder="Enter your password"
+                placeholder="Enter your PIN"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="border-gray-300 focus:border-yellow-500 focus:ring-yellow-500"
