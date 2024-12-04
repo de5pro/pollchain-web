@@ -30,23 +30,48 @@ import { motion, AnimatePresence } from "framer-motion";
 import { format, toZonedTime } from "date-fns-tz";
 import { getAllBlocks } from "@/actions/actions";
 
+const truncateString = (input, maxLength, limit) => {
+  if (input.length <= limit) return input; // Only truncate if length exceeds limit
+
+  const ellipsis = "...";
+  const prefixLength = Math.floor((maxLength - ellipsis.length) / 2); // Length for the start
+  const suffixLength = maxLength - ellipsis.length - prefixLength; // Length for the end
+  return `${input.slice(0, prefixLength)}${ellipsis}${input.slice(
+    -suffixLength
+  )}`;
+};
+
 export default function Component() {
   const [selectedBlock, setSelectedBlock] = useState(null);
   const [selectedHeight, setSelectedHeight] = useState(null);
   const [currentBlocks, setCurrentBlocks] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeSearchQuery, setActiveSearchQuery] = useState("");
   const [latestBlock, setLatestBlock] = useState(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState("Real-Time Clock");
+
+  const filteredBlocks = useMemo(() => {
+    if (!activeSearchQuery.trim() || !currentBlocks) return currentBlocks;
+
+    const query = activeSearchQuery.trim().toLowerCase();
+    return currentBlocks.filter(block => {
+      if (!block.transactions || block.transactions.length === 0) return false;
+      return block.transactions.some(transaction => 
+        transaction.from?.toLowerCase() === query ||
+        transaction.to?.toLowerCase() === query
+      );
+    });
+  }, [activeSearchQuery, currentBlocks]);
 
   useEffect(() => {
     const fetchBlocks = async () => {
       const response = await getAllBlocks();
       setCurrentBlocks(response.blocks);
       setIsLoading(false);
-      console.log(response.blocks);
     };
 
     fetchBlocks();
@@ -99,8 +124,12 @@ export default function Component() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // Implement search functionality here
-    console.log("Searching for:", searchQuery);
+    setIsSearching(true);
+    setActiveSearchQuery(searchQuery);
+    if (!searchQuery.trim()) {
+      setIsSearching(false);
+      setActiveSearchQuery("");
+    }
   };
 
   const toggleDarkMode = () => {
@@ -112,17 +141,6 @@ export default function Component() {
     setSelectedBlock(block);
     setSelectedHeight(height);
     setIsDialogOpen(true);
-  };
-
-  const truncateString = (input, maxLength, limit) => {
-    if (input.length <= limit) return input; // Only truncate if length exceeds limit
-
-    const ellipsis = "...";
-    const prefixLength = Math.floor((maxLength - ellipsis.length) / 2); // Length for the start
-    const suffixLength = maxLength - ellipsis.length - prefixLength; // Length for the end
-    return `${input.slice(0, prefixLength)}${ellipsis}${input.slice(
-      -suffixLength
-    )}`;
   };
 
   return (
@@ -144,7 +162,7 @@ export default function Component() {
         <form onSubmit={handleSearch} className="flex gap-2">
           <Input
             type="text"
-            placeholder="Search by block height, hash, or transaction ID"
+            placeholder="Search through blockchain transactions, blocks, and wallet histories by public key..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="flex-grow dark:bg-gray-800 dark:text-white"
@@ -242,55 +260,77 @@ export default function Component() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {isLoading == false ? (
-                    currentBlocks.toReversed().map((block, index) => (
-                      <motion.tr
-                        key={index}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: index * 0.1 }}
-                      >
-                        <TableCell className="text-center">
-                          {currentBlocks.length - index - 1}
-                        </TableCell>
-                        <TableCell className="font-mono">
-                          {truncateString(block.hash, 30, 20)}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {block.nonce}
-                        </TableCell>
-                        <TableCell className="font-mono">
-                          {block.previousHash === ""
-                            ? "GENESIS_BLOCK"
-                            : truncateString(block.previousHash, 30, 20)}
-                        </TableCell>
-                        <TableCell>
-                          {block.timestamp === "0"
-                            ? "0"
-                            : format(
-                                new Date(parseInt(block.timestamp)),
-                                "yyyy-MM-dd HH:mm:ss"
-                              )}
-                        </TableCell>
-                        <TableCell className="text-md">{`${block.transactions.length} transaction(s)`}</TableCell>
-                        <TableCell>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                              openBlockDetails(
-                                block,
-                                currentBlocks.length - index - 1
-                              )
-                            }
-                            className="dark:text-white dark:hover:bg-gray-700"
-                          >
-                            View Details
-                            <ChevronRight className="ml-2 h-4 w-4" />
-                          </Button>
-                        </TableCell>
-                      </motion.tr>
-                    ))
+                  {isLoading ? (
+                    <tr>
+                      <td colSpan="7" className="text-center py-4">
+                        <div className="flex justify-center items-center">
+                          <span className="text-gray-500 dark:text-gray-300">
+                            Loading blocks...
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : filteredBlocks ? (
+                    filteredBlocks.length > 0 ? (
+                      [...filteredBlocks].reverse().map((block, index) => (
+                        <motion.tr
+                          key={index}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.3, delay: index * 0.1 }}
+                        >
+                          <TableCell className="text-center">
+                            {currentBlocks.length - index - 1}
+                          </TableCell>
+                          <TableCell className="font-mono">
+                            {truncateString(block.hash, 30, 20)}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {block.nonce}
+                          </TableCell>
+                          <TableCell className="font-mono">
+                            {block.previousHash === ""
+                              ? "GENESIS_BLOCK"
+                              : truncateString(block.previousHash, 30, 20)}
+                          </TableCell>
+                          <TableCell>
+                            {block.timestamp === "0"
+                              ? "0"
+                              : format(
+                                  new Date(parseInt(block.timestamp)),
+                                  "yyyy-MM-dd HH:mm:ss"
+                                )}
+                          </TableCell>
+                          <TableCell className="text-md">{`${block.transactions.length} transaction(s)`}</TableCell>
+                          <TableCell>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                openBlockDetails(
+                                  block,
+                                  currentBlocks.length - index - 1
+                                )
+                              }
+                              className="dark:text-white dark:hover:bg-gray-700"
+                            >
+                              View Details
+                              <ChevronRight className="ml-2 h-4 w-4" />
+                            </Button>
+                          </TableCell>
+                        </motion.tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="7" className="text-center py-4">
+                          <div className="flex justify-center items-center">
+                            <span className="text-gray-500 dark:text-gray-300">
+                              No matching blocks found
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    )
                   ) : (
                     <tr>
                       <td colSpan="7" className="text-center py-4">
@@ -317,7 +357,7 @@ export default function Component() {
               </DialogDescription>
             </DialogHeader>
             {selectedBlock && (
-              <div className="grid gap-4 py-4">
+              <div className="grid gap-4">
                 <div className="grid grid-cols-4 items-center gap-4">
                   <span className="font-semibold dark:text-gray-300">
                     Height:
@@ -348,25 +388,34 @@ export default function Component() {
                 {selectedBlock.transactions.map((transaction, index) => (
                   <div key={index}>
                     <span className="font-semibold dark:text-gray-300">
-                      Transaction {index + 1}:
+                      Transaction Details {index + 1}:
                     </span>
                     <div key={index} className="items-center gap-4">
                       <div className="flex flex-col mt-3 ml-6">
                         <div className="font-mono text-sm grid grid-cols-12 h-16">
-                          <strong>From:</strong>
-                          <span className="break-words col-span-11 pl-4">
+                          <strong className="col-span-2">From:</strong>
+                          <span className="break-words col-span-10">
                             {transaction.from}
                           </span>
                         </div>
                         <div className="font-mono text-sm grid grid-cols-12 h-16">
-                          <strong>To:</strong>
-                          <span className="break-words col-span-11 pl-4">
+                          <strong className="col-span-2">To:</strong>
+                          <span className="break-words col-span-10">
                             {transaction.to}
                           </span>
                         </div>
-                        <span className="font-mono text-sm">
-                          <strong>Amount:</strong> {transaction.amount} Vote(s)
-                        </span>
+                        <div className="font-mono text-sm grid grid-cols-12 h-16">
+                          <strong className="col-span-2">Signature:</strong>
+                          <span className="break-words col-span-10">
+                            {transaction.signature}
+                          </span>
+                        </div>
+                        <div className="font-mono text-sm grid grid-cols-12 h-8">
+                          <strong className="col-span-2">Amount:</strong>
+                          <span className="break-words col-span-10">
+                            {transaction.amount} Vote(s)
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -375,7 +424,7 @@ export default function Component() {
             )}
             <Button
               onClick={() => setIsDialogOpen(false)}
-              className="mt-4 w-full"
+              className="w-full"
             >
               Close
             </Button>

@@ -1,34 +1,79 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import BlockExplorer from "@/components/block-explorer";
-// import Navbar from "@/components/navbar";
 import Navbar from "@/components/navbarv2";
+import { getWalletBalance } from "@/actions/actions";
+import { Copy, Check } from "lucide-react";
+
+const truncateString = (input, maxLength, limit) => {
+  if (input.length <= limit) return input; // Only truncate if length exceeds limit
+
+  const ellipsis = "...";
+  const prefixLength = Math.floor((maxLength - ellipsis.length) / 2); // Length for the start
+  const suffixLength = maxLength - ellipsis.length - prefixLength; // Length for the end
+  return `${input.slice(0, prefixLength)}${ellipsis}${input.slice(
+    -suffixLength
+  )}`;
+};
 
 const candidates = [
   {
     name: "Candidate 1",
-    address: "0xajkKJAibuaOAIBbhjAKnsij",
-    votes: 10,
+    address: "04414b1ffabcbdd4b74ebd68f4f5ecfa15600426f3a2fe95247afa0636e1d7251f50ed1afd4e975c8305cb86a6187e26ec4f45348baac39a0d6bf6c066b9d2152c",
+    votes: 0,
   },
   {
     name: "Candidate 2",
-    address: "0xajkKJAibuaOAIBbhjAKnsij",
-    votes: 20,
+    address: "04a21b31dcc89d13e4fb78cb5f8e2505a49ae8eed9d4b6b9495ab9dec05686e249f537e2850f9bdd58b8bd04e9e30663267d614eba120a97b159448e58cdeeba05",
+    votes: 0,
   },
   {
     name: "Candidate 3",
-    address: "0xajkKJAibuaOAIBbhjAKnsij",
-    votes: 30,
+    address: "049a94e4bde78b026dfdc764c317949a866bd2731ae0be9f15b3f8ba382ced8ef5cb3ffddc51c10c951342265e105102fd1b3d55e99066e7bacdf591726d49d4aa",
+    votes: 0,
   },
 ];
 
 export default function LivePollingPage() {
-  const router = useRouter();
-  const totalVotes = candidates.reduce(
-    (acc, candidate) => acc + candidate.votes,
-    0
-  );
+  const [votes, setVotes] = useState([]);
+  const [totalVotes, setTotalVotes] = useState(0);
+  const [copiedIndex, setCopiedIndex] = useState(null);
+
+  const handleCopy = async (text, index) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000); // Reset after 2 seconds
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  useEffect(() => {
+    const fetchVotes = async () => {
+      try {
+        const votesPromises = candidates.map(candidate =>
+          getWalletBalance(candidate.address)
+        );
+
+        const results = await Promise.all(votesPromises);
+        const newVotes = results.map(result => result.balance || 0);
+
+        setVotes(newVotes);
+        const newTotal = newVotes.reduce((acc, curr) => acc + curr, 0);
+        setTotalVotes(newTotal);
+      } catch (error) {
+        console.error("Error fetching votes:", error);
+      }
+    };
+
+    fetchVotes();
+
+    const interval = setInterval(fetchVotes, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <>
@@ -63,10 +108,25 @@ export default function LivePollingPage() {
                 <h1 className="text-black font font-semibold text-xl mt-4 mb-1 dark:text-gray-200">
                   {candidate.name}
                 </h1>
-                <h2 className="text-sm text-gray-500">{candidate.address}</h2>
+                <div className="flex items-center justify-center gap-2">
+                  <h2 className="text-sm text-gray-500 text-center break-words">
+                    {truncateString(candidate.address, 30, 30)}
+                  </h2>
+                  <button
+                    onClick={() => handleCopy(candidate.address, index)}
+                    className="hover:bg-gray-100 rounded-full transition-colors"
+                    title="Copy address"
+                  >
+                    {copiedIndex === index ? (
+                      <Check className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <Copy className="h-4 w-4 text-gray-500 hover:text-gray-700" />
+                    )}
+                  </button>
+                </div>
                 <div>
                   <h1 className="text-black text-center font-bold mt-4 text-5xl dark:text-gray-300">
-                    {candidate.votes}
+                    {votes[index] || 0}
                   </h1>
                   <h2 className="text-center text-xl dark:text-gray-400">
                     Votes
@@ -87,17 +147,15 @@ export default function LivePollingPage() {
                   <div
                     className="bg-gradient-to-r from-green-400 to-blue-500 h-full rounded-full"
                     style={{
-                      width: `${((candidate.votes / totalVotes) * 100).toFixed(
-                        0
-                      )}%`,
+                      width: `${((votes[index] || 0) / totalVotes) * 100}%`,
                     }}
                   ></div>
                 </div>
                 <div className="flex justify-end col-span-1">
                   <span className="text-md font-semibold dark:text-gray-300">{`${(
-                    (candidate.votes / totalVotes) *
+                    ((votes[index] || 0) / totalVotes) *
                     100
-                  ).toFixed(2)}% (${candidate.votes} Votes)`}</span>
+                  ).toFixed(2)}% (${votes[index] || 0} Votes)`}</span>
                 </div>
               </div>
             ))}
