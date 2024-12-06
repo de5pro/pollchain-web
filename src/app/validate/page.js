@@ -1,6 +1,6 @@
 import ValidationPage from '@/components/validation-page'
 
-export default function ValidationPage() {
+export default function Validation() {
   return (
     <ValidationPage />
   )
