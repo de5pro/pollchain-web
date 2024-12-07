@@ -11,12 +11,14 @@ import { CheckCircle2, Camera } from "lucide-react";
 import mqtt from "mqtt";
 import Webcam from "react-webcam";
 import { inertia } from "framer-motion";
+import axios from 'axios'
 
 const MQTT_TOPIC_NPM = process.env.NEXT_PUBLIC_ESP_IP_ADDRESS + "/npm";
 const MQTT_TOPIC_PIN = process.env.NEXT_PUBLIC_ESP_IP_ADDRESS + "/pin";
 const MQTT_TOPIC_CAPTURE = process.env.NEXT_PUBLIC_ESP_IP_ADDRESS + "/capture";
 const MQTT_TOPIC_DEL = process.env.NEXT_PUBLIC_ESP_IP_ADDRESS + "/api/clear";
 const MQTT_BROKER_URL = process.env.NEXT_PUBLIC_MQTT_BROKER;
+const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function VerificationPage() {
   const [npm, setNpm] = useState(Array(10).fill(""));
@@ -31,8 +33,6 @@ export default function VerificationPage() {
       username: process.env.NEXT_PUBLIC_MQTT_USERNAME,
       password: process.env.NEXT_PUBLIC_MQTT_PASSWORD,
     });
-
-    console.log(client.options)
 
     client.on("connect", () => {
       client.subscribe([MQTT_TOPIC_NPM, MQTT_TOPIC_PIN, MQTT_TOPIC_CAPTURE, MQTT_TOPIC_DEL]);
@@ -106,10 +106,37 @@ export default function VerificationPage() {
     setCapturedImage(imageSrc);
   };
 
-  const verifyFace = () => {
-    // Simulate verification process
-    setIsFaceVerified(true);
+  const verifyFace = async () => {
+    if (!capturedImage) {
+      console.error("No face photo captured for login.");
+      return;
+    }
+   
+
+    try {
+      // Convert capturedImage (Base64 string) to a Blob
+    const imageBlob = await (await fetch(capturedImage)).blob(); 
+
+    const result = await axios.postForm(API_BASE_URL + 'login', {
+      npm: npm + "",
+      password: pin + "",
+      photo_face: imageBlob,
+    })
+
+    console.log(result.request)
+    console.log(result.data)
+    
+    if (result.status === 200) {
+      // setShowDialog(true)
+      alert("Login successful!");
+      setIsFaceVerified(true);
+    } 
+    } catch (error) {
+      console.error("Error during login:", error);
+      alert("Login failed. Please check your credentials and try again.");
+    }
   };
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-100 to-cyan-50 dark:from-sky-900 dark:to-cyan-900">
