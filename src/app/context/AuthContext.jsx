@@ -2,6 +2,9 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
+import axios from 'axios';
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL
 
 const AuthContext = createContext();
 
@@ -28,10 +31,20 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (npm, password) => {
     if (npm && password) {
-      const user = { npm, name: 'Test User' };
-      setUser(user);
-      setCookie('user', JSON.stringify(user), { path: '/', maxAge: 60 * 60 * 24 * 7 }); // 7 days
-      return true;
+      try {
+        const res = await axios.post(API_BASE_URL + 'check-registration', {
+          npm: npm,
+          password: password
+        });
+        
+        if (res.status = 200) {
+          setUser(res.data);
+          setCookie('user', JSON.stringify(res.data), { path: '/', maxAge: 60 * 60 * 24 * 7 }); // 7 days
+          return res.data;
+        }
+      } catch (err) {
+        console.log(err);
+      }
     }
     return false;
   };

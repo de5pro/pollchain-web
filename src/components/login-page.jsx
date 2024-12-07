@@ -5,18 +5,28 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertCircle } from "lucide-react"
+import { AlertCircle } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useAuth } from '@/app/context/AuthContext'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
-export default function LoginPage(props) {
+export default function LoginPage() {
   const [npm, setNpm] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [showDialog, setShowDialog] = useState(false)
+  const [userInfo, setUserInfo] = useState(null)
   const { login } = useAuth()
   const router = useRouter()
-  const searchParams = useSearchParams()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -27,14 +37,19 @@ export default function LoginPage(props) {
       return
     }
 
-    const success = await login(npm, password)
-    if (success && searchParams.get('origin') === 'vote') {
-      router.push('/vote')
-    } else if (success) {
-      router.push('/dashboard')
-    } else {
+    const user = await login(npm, password)
+    if (!user) {
       setError('Invalid credentials')
-    }
+      return
+    } 
+
+    setUserInfo(user)
+    setShowDialog(true)
+  }
+
+  const handleDialogClose = () => {
+    setShowDialog(false)
+    router.push('/')
   }
 
   return (
@@ -61,11 +76,11 @@ export default function LoginPage(props) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">PIN</Label>
               <Input 
-                id="password" 
+                id="PIN" 
                 type="password" 
-                placeholder="Enter your password"
+                placeholder="Enter your PIN"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="border-gray-300 focus:border-yellow-500 focus:ring-yellow-500"
@@ -92,6 +107,30 @@ export default function LoginPage(props) {
           </div>
         </CardContent>
       </Card>
+
+      <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Login Successful</AlertDialogTitle>
+            <AlertDialogDescription>
+              Here's your account information:
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          {userInfo && (
+            <div className="mt-4 space-y-2">
+              <p><strong>NPM:</strong> {userInfo.npm}</p>
+              <p><strong>Name:</strong> {userInfo.name}</p>
+              <p><strong>Voting Status:</strong> {userInfo.voting_status ? 'Voted' : 'Not Voted'}</p>
+              <p><strong>Verification Status:</strong> {userInfo.is_verified ? 'Verified' : 'Not Verified'}</p>
+            </div>
+          )}
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={handleDialogClose}>
+              Confirm
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
