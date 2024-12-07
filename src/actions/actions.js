@@ -4,7 +4,7 @@ import axios from "axios";
 
 export const getAllBlocks = async () => {
   try {
-    const res = await axios.get("https://pollpal.ercloud.xyz/getAllBlocks");
+    const res = await axios.get("https://blockchain.ercloud.xyz/getAllBlocks");
     const blocks = res.data;
     return blocks;
   } catch (error) {
@@ -15,7 +15,7 @@ export const getAllBlocks = async () => {
 
 export const getWalletBalance = async (address) => {
   try {
-    const res = await axios.post("https://pollpal.ercloud.xyz/getWalletBalance", {
+    const res = await axios.post("https://blockchain.ercloud.xyz/getWalletBalance", {
       publicKey: address
     });
     const balance = res.data;

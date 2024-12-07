@@ -16,7 +16,7 @@ const MQTT_TOPIC_VOTE = process.env.NEXT_PUBLIC_ESP_IP_ADDRESS + '/vote'
 const ESP_SERVER_URL = 'https://' + process.env.NEXT_PUBLIC_ESP_IP_ADDRESS + '/api/'
 
 export default function VotePage() {
-  const [privateKey, setPrivateKey] = useState('')
+  const [privateKey, setPrivateKey] = useState('de37b7d756762ae0e130a99ccce5db893627b8741cd7d032f845f73c781eba08')
   const [vote, setVote] = useState('')
   const [modeVote, setModeVote] = useState(false) 
   const [progress, setProgress] = useState(100)
@@ -26,7 +26,12 @@ export default function VotePage() {
     { id: 3, name: 'Candidate 3', image: '/candidates/candidate3.png' },
   ]
 
+  // handleSendPrivateKey() = async () => {
+
+  // }
+
   useEffect(() => {
+    handleModeChange()
     const url = process.env.NEXT_PUBLIC_MQTT_BROKER
     const client = mqtt.connect(url, {
       username: process.env.NEXT_PUBLIC_MQTT_USERNAME,
@@ -68,7 +73,7 @@ export default function VotePage() {
   const handleModeChange = async () => {
     axios.post(ESP_SERVER_URL + 'mode', 
       {
-        "modeVote": !modeVote,
+        "modeVote": "vote",
       }, 
       {
         headers: {
