@@ -1,39 +1,5 @@
 import Link from 'next/link'
-import { Facebook, Twitter, Linkedin, Instagram } from 'lucide-react'
-
-const footerLinks = [
-  {
-    title: 'Company',
-    links: [
-      { name: 'About', href: '/about' },
-      { name: 'Careers', href: '/careers' },
-      { name: 'Press', href: '/press' },
-    ],
-  },
-  {
-    title: 'Resources',
-    links: [
-      { name: 'Blog', href: '/blog' },
-      { name: 'Newsletter', href: '/newsletter' },
-      { name: 'Events', href: '/events' },
-    ],
-  },
-  {
-    title: 'Legal',
-    links: [
-      { name: 'Terms', href: '/terms' },
-      { name: 'Privacy', href: '/privacy' },
-      { name: 'Cookies', href: '/cookies' },
-    ],
-  },
-]
-
-const socialLinks = [
-  { name: 'Facebook', icon: Facebook, href: '#' },
-  { name: 'Twitter', icon: Twitter, href: '#' },
-  { name: 'LinkedIn', icon: Linkedin, href: '#' },
-  { name: 'Instagram', icon: Instagram, href: '#' },
-]
+import { footerLinks, socialLinks } from '@/lib/data'
 
 export default function Footer() {
   return (
@@ -45,7 +11,7 @@ export default function Footer() {
               <span className="text-xl font-light">PollPal</span>
             </Link>
             <p className="mt-4 text-sm text-gray-400">
-              Empowering citizens to participate in democracy securely and efficiently.
+              Empowering students to participate in democracy securely and efficiently.
             </p>
           </div>
           {footerLinks.map((column) => (

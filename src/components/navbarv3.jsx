@@ -4,14 +4,9 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { CircleOff } from 'lucide-react';
+import { navItems } from "@/lib/data";
 
-const navItems = [
-  { name: "About", href: "/about" },
-  { name: "Locations", href: "/locations" },
-  { name: "Help", href: "/help" },
-];
-
-export default function FloatingNavbar() {
+export default function Navbar() {
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
   const [showAfterHide, setShowAfterHide] = useState(true)
@@ -63,7 +58,7 @@ export default function FloatingNavbar() {
           exit={{ y: -100, opacity: 1 }}
           transition={{ duration: 0.8, ease: "easeInOut" }}
         >
-          <div className="max-w-7xl translate-x-[8.1%]">
+          <div className="max-w-7xl mx-auto">
             <div className="backdrop-blur-xl bg-white/5 rounded-full border border-white/10 shadow-lg">
               <div className="flex items-center justify-between px-10 py-3">
                 <Link href="/" className="flex items-center space-x-2 text-white hover:text-cyan-400 transition-colors duration-500">
