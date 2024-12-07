@@ -5,11 +5,13 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { CircleOff } from 'lucide-react';
 import { navItems } from "@/lib/data";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
   const [showAfterHide, setShowAfterHide] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     let timeoutId;
@@ -78,8 +80,8 @@ export default function Navbar() {
                       </li>
                     ))}
                     <li>
-                      <button className="bg-gradient-to-bl from-cyan-500 to-cyan-600 hover:from-cyan-700 hover:to-cyan-800 text-white px-4 py-2 rounded-full text-sm font-light transition-all duration-500 hover:scale-105">
-                        Register to Vote
+                      <button className="bg-gradient-to-bl from-cyan-500 to-cyan-600 hover:from-cyan-700 hover:to-cyan-800 text-white px-4 py-2 rounded-full text-sm font-light transition-all duration-500 hover:scale-105" onClick={() => router.push('/check-registration')}>
+                          Register to Vote
                       </button>
                     </li>
                   </ul>

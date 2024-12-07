@@ -5,9 +5,11 @@ require('dotenv').config()
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import mqtt from 'mqtt'
+import { useRouter } from 'next/navigation'
 
 const MQTT_TOPIC_KEY = process.env.NEXT_PUBLIC_ESP_IP_ADDRESS + '/key'
 const MQTT_TOPIC_VOTE = process.env.NEXT_PUBLIC_ESP_IP_ADDRESS + '/vote'
+const MQTT_TOPIC_VOTE_STATUS = process.env.NEXT_PUBLIC_ESP_IP_ADDRESS + '/voteStatus'
 const ESP_SERVER_URL = 'https://' + process.env.NEXT_PUBLIC_ESP_IP_ADDRESS + '/api/'
 
 export default function VotePage() {
@@ -15,6 +17,7 @@ export default function VotePage() {
   const [vote, setVote] = useState('')
   const [progress, setProgress] = useState(100)
   const [selectedCandidate, setSelectedCandidate] = useState(null)
+  const router = useRouter();
 
   const candidates = [
     { 
@@ -57,6 +60,8 @@ export default function VotePage() {
         setPrivateKey(new TextDecoder('utf-8').decode(message)) 
       } else if (topic === MQTT_TOPIC_VOTE) {
         setVote(new TextDecoder('utf-8').decode(message))
+      } else if (topic === MQTT_TOPIC_VOTE_STATUS) {
+        router.push('/live')
       }
     })
 
@@ -66,18 +71,45 @@ export default function VotePage() {
   }, [])
 
   useEffect(() => {
+    handleModeChange('vote')
+
     const interval = setInterval(() => {
       setProgress(prev => {
         if (prev <= 0) {
           clearInterval(interval)
           return 0
         }
-        return prev - 100 / 600
+        return prev - 100 / 300
       })
     }, 100)
 
     return () => clearInterval(interval)
   }, [])
+
+  useEffect(() => {
+    if (progress <= 0) {
+      router.push('/live')
+    }
+  }, [progress])
+
+  const handleModeChange = (mode) => {
+    console.log("Mode changed to " + mode)
+  
+    axios.post(ESP_SERVER_URL + 'mode', 
+      {
+        "modeVote": mode,
+      }, 
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    ).catch((err) => {
+        console.log(err)
+      }
+    )
+  }
+
 
   const handleCandidateSelect = (candidateId) => {
     setSelectedCandidate(candidateId);
@@ -164,18 +196,18 @@ function CandidateCard({ candidate, isSelected, onSelect }) {
       onClick={onSelect}
     >
       <div className="relative mb-4 overflow-hidden rounded-xl w-full h-[16rem]">
-  {/* Number on top of the image */}
-  <div className="absolute top-4 left-4 text-5xl font-light text-[#00E5CC] opacity-50 z-10">
-    {id}
-  </div>
-  {/* Image */}
-  <img
-    src={image}
-    alt={`Portrait of ${name}`}
-    className={`object-cover w-full h-full transition-transform duration-300 
-      ${isSelected ? 'scale-105' : 'group-hover:scale-105'}`}
-  />
-</div>
+        {/* Number on top of the image */}
+        <div className="absolute top-4 left-4 text-5xl font-light text-[#00E5CC] opacity-50 z-10">
+          {id}
+        </div>
+        {/* Image */}
+        <img
+          src={image}
+          alt={`Portrait of ${name}`}
+          className={`object-cover w-full h-full transition-transform duration-300 
+            ${isSelected ? 'scale-105' : 'group-hover:scale-105'}`}
+        />
+      </div>
 
       <h3 className={`text-2xl font-light mb-2 transition-colors 
         ${isSelected ? 'text-[#00E5CC]' : 'text-white group-hover:text-[#00E5CC]'}`}>

@@ -1,3 +1,5 @@
+"use client"
+
 import {
   MapPin,
   Calendar,
@@ -9,8 +11,11 @@ import {
   Network,
   Info,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function DetailsPage() {
+  const router = useRouter();
+
   return (
     <div className="min-h-screen pt-24 pb-16 bg-[#001A1E] bg-gradient-to-br from-[#001A1E] via-[#003644] to-[#002A35]">
       {/* Main Content */}
@@ -113,7 +118,7 @@ export default function DetailsPage() {
                   </div>
                 </div>
                 <div className="md:flex-shrink-0">
-                  <button className="bg-gradient-to-bl from-cyan-400 via-cyan-600 to-cyan-800 text-white px-12 py-4 rounded-xl text-lg font-light transition-all duration-500 hover:from-cyan-500 hover:via-cyan-700 hover:to-cyan-900 hover:scale-105 group/btn relative">
+                  <button className="bg-gradient-to-bl from-cyan-400 via-cyan-600 to-cyan-800 text-white px-12 py-4 rounded-xl text-lg font-light transition-all duration-500 hover:from-cyan-500 hover:via-cyan-700 hover:to-cyan-900 hover:scale-105 group/btn relative" onClick={() => router.push('/verification')}>
                     <span className="relative z-10 flex items-center">
                       Cast Your Vote
                       <ChevronRight className="ml-2 h-5 w-5 group-hover/btn:translate-x-1 transition-transform" />

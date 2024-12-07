@@ -22,8 +22,8 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 const ESP_SERVER_URL = 'https://' + process.env.NEXT_PUBLIC_ESP_IP_ADDRESS + '/api/'
 
 export default function VerificationPage() {
-  const [npm, setNpm] = useState(Array(10).fill("A"));
-  const [pin, setPin] = useState(Array(6).fill("A"));
+  const [npm, setNpm] = useState(Array(10).fill(""));
+  const [pin, setPin] = useState(Array(6).fill(""));
   const [capturedImage, setCapturedImage] = useState(null);
   const [isFaceVerified, setIsFaceVerified] = useState(false);
   const [inCapture, setInCapture] = useState(false);
@@ -32,7 +32,6 @@ export default function VerificationPage() {
   const router = useRouter();
 
   const handleSendToken = async (token) => {
-    console.log("Sending", token)
     axios.post(ESP_SERVER_URL + 'token', 
       {
         "token": token,
@@ -44,7 +43,7 @@ export default function VerificationPage() {
       }
     ).then((resp) => {
         if (resp.status === 200) {
-          handleModeChange("key")
+          setTimeout(() => router.push('/private-key'), 5000)
         } 
       }
     ).catch((err) => {
@@ -54,8 +53,6 @@ export default function VerificationPage() {
   }
 
   const handleModeChange = (mode) => {
-    console.log("Mode changed to " + mode)
-  
     axios.post(ESP_SERVER_URL + 'mode', 
       {
         "modeVote": mode,
@@ -65,14 +62,7 @@ export default function VerificationPage() {
           'Content-Type': 'application/json'
         }
       }
-    ).then((resp) => {
-        if (resp.status === 200) {
-          // setInputMode(mode)
-        }
-        // setInputMode(mode)
-      }
     ).catch((err) => {
-        // setInputMode(mode)
         console.log(err)
       }
     )
@@ -80,18 +70,13 @@ export default function VerificationPage() {
 
   useEffect(() => {
     if (npm.every((digit) => digit !== "")) {
-      console.log("ganti pin")
       handleModeChange("pin")
-      // inputMode = 'pin'
-      // setInputMode('pin')
     }
   }, [npm]);
 
   useEffect(() => {
     if (pin.every((digit) => digit !== "")) {
       handleModeChange("capture")
-      // inputMode = 'capture'
-      // setInputMode('capture')
     }
   }, [pin]);
 
@@ -112,16 +97,6 @@ export default function VerificationPage() {
       } else if (mode === "deletePin") {
         deleteOtpInput(setPin);
       }
-      // switch (inputMode) {
-      //   case "npm":
-          
-      //     break;
-      //   case "pin":
-          
-      //     break;
-      //   default:
-      //     break;
-      // }
     }
   }
 
@@ -206,28 +181,28 @@ export default function VerificationPage() {
       // Convert capturedImage (Base64 string) to a Blob
     const imageBlob = await (await fetch(capturedImage)).blob(); 
     
-    // const result = await axios.postForm(API_BASE_URL + 'login', {
-    //   npm: npm.join(""),
-    //   password: pin.join(""),
-    //   photo_face: imageBlob,
-    // })
-
     const result = await axios.postForm(API_BASE_URL + 'login', {
-      npm: "2106638406",
-      password: "Eriqo123",
+      npm: npm.join(""),
+      password: pin.join(""),
       photo_face: imageBlob,
     })
+
+    // const result = await axios.postForm(API_BASE_URL + 'login', {
+    //   npm: "2106704894",
+    //   password: "123654",
+    //   photo_face: imageBlob,
+    // })
   
     console.log(result.data)
     if (result.status === 200) {
       // setShowDialog(true)
-      alert("Login successful!");
       setIsFaceVerified(true);
       handleSendToken(result.data.token)
     } 
     } catch (error) {
       console.error("Error during login:", error);
       alert("Login failed. Please check your credentials and try again.");
+      setTimeout(() => {window.location.reload()}, 3000)
     }
   };
 
@@ -319,13 +294,7 @@ export default function VerificationPage() {
               <div className="text-center space-y-4">
                 <CheckCircle2 className="mx-auto h-16 w-16 text-[#00E5CC]" />
                 <p className="text-xl font-light text-white">Verification Complete</p>
-                <p className="text-gray-300">You can now proceed to vote</p>
-                <Button 
-                  className="inline-flex items-center bg-[#00E5CC] text-[#001A1E] text-lg px-6 py-4 rounded-full hover:bg-[#00c4af] transition-colors mx-auto"
-                  onClick={() => router.push('/private-key')} 
-                >
-                  Start Voting <ChevronRight className="ml-2 h-5 w-5" />
-                </Button>
+                <p className="text-gray-300">Prepare your QR code!</p>
               </div>
             )}
           </div>

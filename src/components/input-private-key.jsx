@@ -37,6 +37,24 @@ export default function InputPrivateKey() {
     };
   }, []);
 
+  const handleModeChange = (mode) => {
+    console.log("Mode changed to " + mode)
+  
+    axios.post(ESP_SERVER_URL + 'mode', 
+      {
+        "modeVote": mode,
+      }, 
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    ).catch((err) => {
+        console.log(err)
+      }
+    )
+  }
+
   const handleSendPrivateKey = async (privateKey) => {
     console.log("Sending", privateKey)
     axios.post(ESP_SERVER_URL + 'privateKey', 
@@ -50,10 +68,8 @@ export default function InputPrivateKey() {
         }
       ).then((resp) => {
           if (resp.status === 200) {
-            console.log(!resp.data.error)
-            if(!resp.data.error) {
-                router.push('/vote');
-            }
+            handleModeChange("key")
+            router.push('/vote');
           } 
         }
       ).catch((err) => {
@@ -81,12 +97,6 @@ export default function InputPrivateKey() {
               <div className="bg-[#001214]/50 p-4 rounded-lg mb-6">
                 <p className="font-mono break-all text-[#00E5CC]">{scanResult}</p>
               </div>
-              <button
-                onClick={() => window.location.reload()}
-                className="bg-[#00E5CC] text-gray-900 px-6 py-2 rounded-md hover:bg-[#00C4B0] transition-colors"
-              >
-                Scan Again
-              </button>
             </div>
           ) : (
             <div>

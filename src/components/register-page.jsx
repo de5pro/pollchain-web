@@ -20,6 +20,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useQRCode } from 'next-qrcode'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL
 
@@ -35,6 +36,7 @@ export default function RegisterPage() {
   const [keySaved, setKeySaved] = useState(false)
   const router = useRouter()
   const fileInputRef = useRef(null)
+  const { Canvas } = useQRCode()
 
   const handleFileChange = (e) => {
     const file = e.target.files[0]
@@ -183,12 +185,22 @@ export default function RegisterPage() {
           <AlertDialogHeader>
             <AlertDialogTitle className="text-white">Registration Successful</AlertDialogTitle>
             <AlertDialogDescription className="text-gray-300">
-              Your private key is:
-              <div className="mt-2 p-4 bg-[#001A1E] rounded-lg break-all font-mono text-sm text-[#00E5CC]">
-                {privateKey}
-              </div>
+              Your QR code :
+              <Canvas
+                text={privateKey}
+                options={{
+                  errorCorrectionLevel: 'M',
+                  margin: 3,
+                  scale: 4,
+                  width: 200,
+                  color: {
+                    dark: '#000000FF',
+                    light: '#FFFFFFFF',
+                  },
+                }}
+              />
               <div className="mt-4 text-red-400 font-semibold">
-                Please save this private key. You won't be able to recover it later.
+                Please save this QR code. You won't be able to recover it later.
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
