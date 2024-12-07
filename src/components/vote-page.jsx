@@ -3,11 +3,6 @@
 require('dotenv').config()
 
 import { useEffect, useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from '@/components/ui/progress'
-import { Switch } from './ui/switch'
-import Image from 'next/image'
 import axios from 'axios'
 import mqtt from 'mqtt'
 
@@ -18,20 +13,34 @@ const ESP_SERVER_URL = 'https://' + process.env.NEXT_PUBLIC_ESP_IP_ADDRESS + '/a
 export default function VotePage() {
   const [privateKey, setPrivateKey] = useState('de37b7d756762ae0e130a99ccce5db893627b8741cd7d032f845f73c781eba08')
   const [vote, setVote] = useState('')
-  const [modeVote, setModeVote] = useState(false) 
   const [progress, setProgress] = useState(100)
+  const [selectedCandidate, setSelectedCandidate] = useState(null)
+
   const candidates = [
-    { id: 1, name: 'Candidate 1', image: '/candidates/candidate1.png' },
-    { id: 2, name: 'Candidate 2', image: '/candidates/candidate2.png' },
-    { id: 3, name: 'Candidate 3', image: '/candidates/candidate3.png' },
+    { 
+      id: 1, 
+      name: "Alex Johnson", 
+      party: "Progressive Party",
+      image: "https://cdn.antaranews.com/cache/1200x800/2024/10/03/000_36J26WD.jpg",
+      description: "Dedicated to environmental policies and social justice reforms."
+    },
+    { 
+      id: 2, 
+      name: "Sam Rodriguez", 
+      party: "Centrist Alliance",
+      image: "https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3a97/live/0dac61f0-d7a9-11ee-8f28-259790e80bba.jpg",
+      description: "Focused on economic growth and bipartisan cooperation."
+    },
+    { 
+      id: 3, 
+      name: "Jordan Lee", 
+      party: "Conservative Coalition",
+      image: "https://static.independent.co.uk/2024/10/28/09/27-3c5ee0b831ca40e8843478fb62e81cd8.jpg",
+      description: "Advocating for fiscal responsibility and traditional values."
+    }
   ]
 
-  // handleSendPrivateKey() = async () => {
-
-  // }
-
   useEffect(() => {
-    handleModeChange()
     const url = process.env.NEXT_PUBLIC_MQTT_BROKER
     const client = mqtt.connect(url, {
       username: process.env.NEXT_PUBLIC_MQTT_USERNAME,
@@ -63,147 +72,120 @@ export default function VotePage() {
           clearInterval(interval)
           return 0
         }
-        return prev - 100 / 600 // Decrease progress every 0.1 seconds
+        return prev - 100 / 600
       })
     }, 100)
 
     return () => clearInterval(interval)
-  })
+  }, [])
 
-  const handleModeChange = async () => {
-    axios.post(ESP_SERVER_URL + 'mode', 
-      {
-        "modeVote": "vote",
-      }, 
-      {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }
-    ).then((resp) => {
-        if (resp.status === 200) {
-          setModeVote(!modeVote)
-        }
-        setModeVote(!modeVote)
-      }
-    ).catch((err) => {
-        setModeVote(!modeVote) //temporary until CORS is fixed
-        console.log(err)
-      }
-    )
-  }
-
-  const handleClearInput = async () => {
-    axios.get(ESP_SERVER_URL + 'clear')
-      .then((resp) => {
-        if (resp.status === 200) {
-          if (modeVote === false) {
-            setPrivateKey('') 
-          } else {
-            setVote('')
-          }
-        }
-        if (modeVote === false) {
-          setPrivateKey('') 
-        } else {
-          setVote('')
-        }
-      })
-      .catch((err) => {
-        if (modeVote === false) {
-          setPrivateKey('') 
-        } else {
-          setVote('')
-        }
-        console.log(err)
-      })
+  const handleCandidateSelect = (candidateId) => {
+    setSelectedCandidate(candidateId);
+    setVote(candidateId.toString());
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 text-black p-6">
-      <header className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-black">Cast Your Vote</h1>
-      </header>
+    <div className="min-h-screen pt-24 pb-16 bg-[#001A1E] bg-gradient-to-br from-[#001A1E] via-[#003644] to-[#002A35]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <div className="max-w-3xl mx-auto text-center mb-8">
+          <h1 className="text-3xl font-light text-white">
+            User Opinion Poll:
+            <br />
+            <span className="font-semibold bg-gradient-to-r from-cyan-500 to-blue-200 bg-clip-text text-transparent text-5xl">
+              Best Player Voting
+            </span>
+          </h1>
+          <p className="text-lg tracking-wide text-gray-400 pt-2">
+            Your voice matters. Participate in the most transparent and secure polling experience.
+          </p>
+        </div>
 
-      <main className="space-y-8">
-        <section
-          className="grid gap-6"
-          style={{
-            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 250px))",
-            justifyContent: "center",
-          }}
-        >
-          {candidates.map((candidate) => (
-            <Card key={candidate.id} className="bg-white border-gray-200 shadow-md">
-              <CardHeader className="flex flex-col items-center justify-center">
-                <CardTitle className="text-3xl font-semibold text-black">{candidate.id}</CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col items-center">
-                <Image
-                  src={candidate.image}
-                  width={200}
-                  height={200}
-                  alt="candidate image"
-                  className="mb-4 rounded border-2 border-gray-300"
-                />
-                <p className="text-gray-600 text-xl text-center">{candidate.name}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </section>
-
-        <section className="space-y-4">
-          <Progress value={progress} className="h-4 bg-gray-200" />
-          <div className="text-center">
-            {progress > 0
-              ? `${((progress / 100) * 60).toFixed(1)} seconds remaining`
-              : "Time is up!"}
+        {/* Candidates Section */}
+        <section>
+          <div className="grid md:grid-cols-3 gap-8">
+            {candidates.map((candidate) => (
+              <CandidateCard
+                key={candidate.id}
+                candidate={candidate}
+                isSelected={selectedCandidate === candidate.id}
+                onSelect={() => handleCandidateSelect(candidate.id)}
+              />
+            ))}
           </div>
         </section>
 
-        <section className="text-center space-y-4">
-          <div className="flex items-center justify-center space-x-4">
-            <div
-              className={`text-lg font-semibold transition ${
-                !modeVote ? "text-black" : "text-gray-400 blur-[1px]"
-              }`}
-            >
-              Private Key
+        {/* Voting Interface */}
+        <div className="mt-16 backdrop-blur-sm bg-[#001214]/50 rounded-2xl p-8 border border-white/5 hover:border-[#00E5CC]/30 transition-colors group">
+          <h2 className="text-2xl font-light text-white mb-8 group-hover:text-[#00E5CC]">
+            Voting Progress
+          </h2>
+          
+          <div className="space-y-4">
+            {/* Progress Section */}
+            <div className="w-full bg-gray-200 rounded-full h-4 dark:bg-gray-700 mb-4">
+              <div 
+                className="bg-[#00E5CC] h-4 rounded-full" 
+                style={{ width: `${progress}%` }}
+              ></div>
             </div>
-            <Switch
-              onCheckedChange={handleModeChange}
-              className="bg-yellow-500"
-            />
-            <div
-              className={`text-lg font-semibold transition ${
-                modeVote ? "text-black" : "text-gray-400 blur-[1px]"
-              }`}
-            >
-              Vote
+            <div className="text-center text-white mb-6">
+              {progress > 0
+                ? `${((progress / 100) * 60).toFixed(1)} seconds remaining`
+                : "Time is up!"}
+            </div>
+
+            <div className="text-center space-y-4 text-white">
+              <div className="text-lg">
+                <strong className="text-[#00E5CC]">Private Key: </strong>
+                <span>{privateKey}</span>
+              </div>
+              <div className="text-lg">
+                <strong className="text-[#00E5CC]">Selected Candidate: </strong>
+                <span>{vote || 'None'}</span>
+              </div>
             </div>
           </div>
-        </section>
+        </div>
+      </div>
+    </div>
+  )
+}
 
-        <section className="text-center space-y-4">
-          <div className="text-lg">
-            <strong>Private Key: </strong>
-            <span className="text-yellow-600">{privateKey}</span>
-          </div>
-          <div className="text-lg">
-            <strong>Vote: </strong>
-            <span className="text-yellow-600">{vote}</span>
-          </div>
-        </section>
+function CandidateCard({ candidate, isSelected, onSelect }) {
+  const { id, name, party, image, description } = candidate;
 
-        <section className="flex justify-center space-x-4">
-          <Button
-            className="bg-red-500 text-white hover:bg-red-600 transition-colors"
-            onClick={handleClearInput}
-          >
-            Clear Input
-          </Button>
-        </section>
-      </main>
+  return (
+    <div 
+      className={`backdrop-blur-sm rounded-2xl p-6 border transition-all duration-300 cursor-pointer 
+        ${isSelected 
+          ? 'bg-[#00E5CC]/30 border-[#00E5CC]' 
+          : 'bg-[#001214]/50 border-white/5 hover:border-[#00E5CC]/30'
+        }`}
+      onClick={onSelect}
+    >
+      <div className="relative mb-4 overflow-hidden rounded-xl w-full h-[16rem]">
+  {/* Number on top of the image */}
+  <div className="absolute top-4 left-4 text-5xl font-light text-[#00E5CC] opacity-50 z-10">
+    {id}
+  </div>
+  {/* Image */}
+  <img
+    src={image}
+    alt={`Portrait of ${name}`}
+    className={`object-cover w-full h-full transition-transform duration-300 
+      ${isSelected ? 'scale-105' : 'group-hover:scale-105'}`}
+  />
+</div>
+
+      <h3 className={`text-2xl font-light mb-2 transition-colors 
+        ${isSelected ? 'text-[#00E5CC]' : 'text-white group-hover:text-[#00E5CC]'}`}>
+        {name}
+      </h3>
+      <p className={`mb-4 transition-colors 
+        ${isSelected ? 'text-white' : 'text-[#00E5CC]'}`}>
+        {party}
+      </p>
+      <p className="text-gray-400 leading-relaxed">{description}</p>
     </div>
   )
 }

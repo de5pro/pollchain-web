@@ -7,11 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircle2, Camera } from "lucide-react";
+import { CheckCircle2, Camera, ChevronRight } from "lucide-react";
 import mqtt from "mqtt";
 import Webcam from "react-webcam";
-import { inertia } from "framer-motion";
-import axios from 'axios'
+import axios from 'axios';
+import { motion } from "framer-motion";
+import { useRouter } from 'next/navigation'
 
 const MQTT_TOPIC_NPM = process.env.NEXT_PUBLIC_ESP_IP_ADDRESS + "/npm";
 const MQTT_TOPIC_PIN = process.env.NEXT_PUBLIC_ESP_IP_ADDRESS + "/pin";
@@ -28,6 +29,7 @@ export default function VerificationPage() {
   const [inCapture, setInCapture] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const webcamRef = useRef(null);
+  const router = useRouter();
 
   const handleSendToken = async (token) => {
     console.log("Sending", token)
@@ -211,8 +213,8 @@ export default function VerificationPage() {
     // })
 
     const result = await axios.postForm(API_BASE_URL + 'login', {
-      npm: "2106708463",
-      password: "123456",
+      npm: "2106638406",
+      password: "Eriqo123",
       photo_face: imageBlob,
     })
   
@@ -228,78 +230,112 @@ export default function VerificationPage() {
       alert("Login failed. Please check your credentials and try again.");
     }
   };
-  
+
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-100 to-cyan-50 dark:from-sky-900 dark:to-cyan-900">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Voter Verification</CardTitle>
-          <CardDescription>Please complete the steps sequentially</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="npm">NPM (10 Digits)</Label>
-            <div className="flex space-x-1">
-              {npm.map((digit, index) => (
-                <Input key={index} value={digit} readOnly className="w-8 text-center" />
-              ))}
-            </div>
-          </div>
+    <div className="min-h-screen bg-[#001A1E] bg-gradient-to-br from-[#001A1E] via-[#003644] to-[#002A35] flex items-center justify-center">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full max-w-md backdrop-blur-sm bg-[#001214]/50 rounded-2xl border border-white/5 overflow-hidden"
+      >
+        <div className="p-8">
+          <h2 className="text-4xl font-light mb-2 text-white text-center">
+            Voter Verification
+          </h2>
+          <p className="text-[#00E5CC] text-xl mb-8 text-center">
+            Complete Your Authentication
+          </p>
 
-          {npm.every((digit) => digit !== ""
-          ) && (
+          <div className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="pin">6-Digit PIN</Label>
-              <div className="flex space-x-1">
-                {pin.map((digit, index) => (
-                  
-                  <Input key={index} value={digit} readOnly className="w-10 text-center" />
+              <Label className="text-gray-300">NPM (10 Digits)</Label>
+              <div className="flex space-x-1 justify-center">
+                {npm.map((digit, index) => (
+                  <Input 
+                    key={index} 
+                    value={digit} 
+                    readOnly 
+                    className="w-8 text-center text-white bg-[#001A1E] border-[#00E5CC]/30 focus:border-[#00E5CC]" 
+                  />
                 ))}
               </div>
             </div>
-          )}
 
-{pin.every((digit) => digit !== "") && !capturedImage && (
-            <div className="space-y-4">
-              <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden" onLoad={() => setInCapture(true)}>
-                <Webcam
-                  audio={false}
-                  ref={webcamRef}
-                  screenshotFormat="image/jpeg"
-                  videoConstraints={{ facingMode: "user" }}
-                  className="w-full h-full object-cover"
-                />
+            {npm.every((digit) => digit !== "") && (
+              <div className="space-y-2">
+                <Label className="text-gray-300">6-Digit PIN</Label>
+                <div className="flex space-x-1 justify-center">
+                  {pin.map((digit, index) => (
+                    <Input 
+                      key={index} 
+                      value={digit} 
+                      readOnly 
+                      className="w-10 text-center text-white bg-[#001A1E] border-[#00E5CC]/30 focus:border-[#00E5CC]" 
+                    />
+                  ))}
+                </div>
               </div>
-              <Button onClick={captureImage} className="w-full">
-                <Camera className="mr-2 h-4 w-4" /> Capture Image
-              </Button>
-            </div>
-          )}
+            )}
 
-{capturedImage && !isFaceVerified && (
-            <div className="space-y-4">
-              <img src={capturedImage} alt="Captured" className="w-full h-full object-cover rounded-lg" />
-              <Button onClick={verifyFace} className="w-full">
-                Verify Face
-              </Button>
-            </div>
-          )}
+            {pin.every((digit) => digit !== "") && !capturedImage && (
+              <div className="space-y-4">
+                <div className="relative aspect-video bg-[#003644] rounded-lg overflow-hidden">
+                  <Webcam
+                    audio={false}
+                    ref={webcamRef}
+                    screenshotFormat="image/jpeg"
+                    videoConstraints={{ facingMode: "user" }}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <Button 
+                  onClick={captureImage} 
+                  className="w-full bg-[#00E5CC] text-[#001A1E] hover:bg-[#00c4af] transition-colors"
+                >
+                  <Camera className="mr-2 h-4 w-4" /> Capture Image
+                </Button>
+              </div>
+            )}
 
-          {isFaceVerified && (
-            <div className="text-center space-y-4">
-              <CheckCircle2 className="mx-auto h-16 w-16 text-green-500" />
-              <p className="text-xl font-semibold">Verification Complete</p>
-              <p>You can now proceed to vote.</p>
-            </div>
-          )}
-        </CardContent>
-        <CardFooter>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Ensure you're in a well-lit area for the face verification step.
+            {capturedImage && !isFaceVerified && (
+              <div className="space-y-4">
+                <img 
+                  src={capturedImage} 
+                  alt="Captured" 
+                  className="w-full h-full object-cover rounded-lg" 
+                />
+                <Button 
+                  onClick={verifyFace} 
+                  className="w-full bg-[#00E5CC] text-[#001A1E] hover:bg-[#00c4af] transition-colors"
+                >
+                  Verify Face
+                </Button>
+              </div>
+            )}
+
+            {isFaceVerified && (
+              <div className="text-center space-y-4">
+                <CheckCircle2 className="mx-auto h-16 w-16 text-[#00E5CC]" />
+                <p className="text-xl font-light text-white">Verification Complete</p>
+                <p className="text-gray-300">You can now proceed to vote</p>
+                <Button 
+                  className="inline-flex items-center bg-[#00E5CC] text-[#001A1E] text-lg px-6 py-4 rounded-full hover:bg-[#00c4af] transition-colors mx-auto"
+                  onClick={() => router.push('/private-key')} 
+                >
+                  Start Voting <ChevronRight className="ml-2 h-5 w-5" />
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="bg-[#001214]/50 p-4 text-center">
+          <p className="text-sm text-gray-400">
+            Ensure you're in a well-lit area for face verification
           </p>
-        </CardFooter>
-      </Card>
+        </div>
+      </motion.div>
     </div>
   );
 }

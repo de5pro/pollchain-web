@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertCircle, Upload } from 'lucide-react'
+import { AlertCircle, Upload, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
@@ -88,53 +88,50 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex flex-col justify-center items-center p-4">
+    <div className="min-h-screen bg-[#001A1E] bg-gradient-to-br from-[#001A1E] via-[#003644] to-[#002A35] flex flex-col justify-center items-center p-4">
       <Link href="/" className="mb-8">
-        <h1 className="text-4xl font-bold text-black">votcha!</h1>
+        <h1 className="text-4xl font-light text-white">PollPal</h1>
       </Link>
       
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md backdrop-blur-sm bg-[#001214]/50 border border-white/5 rounded-2xl">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">Create Your Account</CardTitle>
+          <CardTitle className="text-3xl font-light text-center text-white">Create Your Account</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="npm">NPM (Student ID)</Label>
+              <Label className="text-gray-300">NPM (Student ID)</Label>
               <Input 
-                id="npm" 
                 type="text" 
                 placeholder="Enter your NPM" 
                 value={npm}
                 onChange={(e) => setNpm(e.target.value)}
-                className="border-gray-300 focus:border-yellow-500 focus:ring-yellow-500"
+                className="bg-[#002A35] border-[#00E5CC]/20 text-white focus:border-[#00E5CC] focus:ring-[#00E5CC]"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
+              <Label className="text-gray-300">Name</Label>
               <Input 
-                id="name" 
                 type="text" 
                 placeholder="Enter your name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="border-gray-300 focus:border-yellow-500 focus:ring-yellow-500"
+                className="bg-[#002A35] border-[#00E5CC]/20 text-white focus:border-[#00E5CC] focus:ring-[#00E5CC]"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="pin">PIN</Label>
+              <Label className="text-gray-300">PIN</Label>
               <Input 
-                id="pin" 
                 type="password" 
                 placeholder="Enter your PIN"
                 value={pin}
                 onChange={(e) => setPin(e.target.value)}
-                className="border-gray-300 focus:border-yellow-500 focus:ring-yellow-500"
+                className="bg-[#002A35] border-[#00E5CC]/20 text-white focus:border-[#00E5CC] focus:ring-[#00E5CC]"
               />
             </div>
             <div className="space-y-2">
-              <Label>Photo</Label>
-              <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
+              <Label className="text-gray-300">Photo</Label>
+              <div className="relative aspect-video bg-[#002A35] rounded-lg overflow-hidden mb-2">
                 {previewUrl ? (
                   <img src={previewUrl} alt="Uploaded" className="w-full h-full object-cover" />
                 ) : (
@@ -153,43 +150,44 @@ export default function RegisterPage() {
               <Button
                 type="button"
                 onClick={triggerFileInput}
-                className="w-full bg-yellow-500 text-black hover:bg-yellow-600 transition-colors"
+                className="w-full bg-[#00E5CC] text-[#001A1E] hover:bg-[#00c4af] transition-colors"
               >
                 <Upload className="mr-2 h-4 w-4" /> Upload Photo
               </Button>
             </div>
             {error && (
-              <div className="text-red-500 flex items-center space-x-2">
+              <div className="text-red-400 flex items-center space-x-2">
                 <AlertCircle size={16} />
                 <span>{error}</span>
               </div>
             )}
             <Button 
               type="submit" 
-              className="w-full bg-yellow-500 text-black hover:bg-yellow-600 transition-colors"
+              className="w-full bg-[#00E5CC] text-[#001A1E] hover:bg-[#00c4af] transition-colors"
             >
               Register
+              <ChevronRight className="ml-2 h-5 w-5" />
             </Button>
           </form>
-          <div className="mt-4 text-center text-sm text-gray-600">
-            Already have an account?{' '}
-            <Link href="/login" className="text-yellow-600 hover:underline">
-              Login here
+          <div className="mt-4 text-center text-sm text-gray-400">
+            Already registered?{' '}
+            <Link href="/check-registration" className="text-[#00E5CC] hover:underline">
+              Check here
             </Link>
           </div>
         </CardContent>
       </Card>
 
       <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-[#002A35] border-[#00E5CC]/20">
           <AlertDialogHeader>
-            <AlertDialogTitle>Registration Successful</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-white">Registration Successful</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-300">
               Your private key is:
-              <div className="mt-2 p-4 bg-gray-100 rounded-lg break-all font-mono text-sm">
+              <div className="mt-2 p-4 bg-[#001A1E] rounded-lg break-all font-mono text-sm text-[#00E5CC]">
                 {privateKey}
               </div>
-              <div className="mt-4 text-red-600 font-semibold">
+              <div className="mt-4 text-red-400 font-semibold">
                 Please save this private key. You won't be able to recover it later.
               </div>
             </AlertDialogDescription>
@@ -200,10 +198,11 @@ export default function RegisterPage() {
                 id="terms" 
                 checked={keySaved}
                 onCheckedChange={setKeySaved}
+                className="border-[#00E5CC]"
               />
               <label
                 htmlFor="terms"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                className="text-sm font-medium text-gray-300"
               >
                 I have saved my private key
               </label>
@@ -211,7 +210,7 @@ export default function RegisterPage() {
             <AlertDialogAction
               onClick={handleConfirm}
               disabled={!keySaved}
-              className="bg-yellow-500 text-black hover:bg-yellow-600 transition-colors disabled:opacity-50"
+              className="bg-[#00E5CC] text-[#001A1E] hover:bg-[#00c4af] transition-colors disabled:opacity-50"
             >
               Confirm
             </AlertDialogAction>
@@ -221,4 +220,3 @@ export default function RegisterPage() {
     </div>
   )
 }
-
