@@ -3,8 +3,6 @@ import LivePollingPage from '@/components/live-polling'
 
 export default function Live() {
   return (
-    <AuthGuard>
-        <LivePollingPage />
-    </AuthGuard>
+    <LivePollingPage />
   )
 }

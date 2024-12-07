@@ -131,14 +131,7 @@ export default function Component() {
         <div className="flex justify-between items-center">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text">
             Blockchain Explorer
-          </h1>
-          <Button variant="outline" size="icon" onClick={toggleDarkMode}>
-            {isDarkMode ? (
-              <Sun className="h-[1.2rem] w-[1.2rem]" />
-            ) : (
-              <Moon className="h-[1.2rem] w-[1.2rem]" />
-            )}
-          </Button>
+          </h1> 
         </div>
 
         <form onSubmit={handleSearch} className="flex gap-2">
