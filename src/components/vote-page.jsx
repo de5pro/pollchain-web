@@ -33,6 +33,8 @@ export default function VotePage() {
       password: process.env.NEXT_PUBLIC_MQTT_PASSWORD,
     }) 
 
+    console.log(client.options)
+
     client.on('connect', () => {
       client.subscribe(MQTT_TOPIC_KEY) 
       client.subscribe(MQTT_TOPIC_VOTE) 
