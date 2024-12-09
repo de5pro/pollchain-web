@@ -73,7 +73,7 @@ export default function Component() {
       // Add blockHeight to each block, starting from 0
       const blocksWithHeight = response.blocks.map((block, index) => ({
         ...block,
-        blockHeight: index
+        blockHeight: index,
       }));
       setCurrentBlocks(blocksWithHeight);
       setIsLoading(false);
@@ -91,15 +91,17 @@ export default function Component() {
         if (blocks.length > 0) {
           const lastBlock = {
             ...blocks[blocks.length - 1],
-            blockHeight: blocks.length - 1
+            blockHeight: blocks.length - 1,
           };
 
           if (!latestBlock || lastBlock.timestamp !== latestBlock.timestamp) {
             setLatestBlock(lastBlock);
-            setCurrentBlocks(blocks.map((block, index) => ({
-              ...block,
-              blockHeight: index
-            })));
+            setCurrentBlocks(
+              blocks.map((block, index) => ({
+                ...block,
+                blockHeight: index,
+              }))
+            );
           }
         }
       } catch (error) {
@@ -152,7 +154,7 @@ export default function Component() {
 
   return (
     <div
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24"
+      className="max-w-7xl md:mx-auto px-4 sm:px-6 lg:px-8 pt-24 mx-4"
       id="block-explorer"
     >
       <div className={`${isDarkMode ? "dark" : ""}`}>
@@ -192,7 +194,7 @@ export default function Component() {
             <div className="p-0">
               <div className="flex items-center h-12">
                 <div className="flex-shrink-0 border-r border-white/5 h-full flex items-center px-6 bg-gray-950/25">
-                  <span className="font-medium text-white min-w-32">
+                  <span className="font-medium text-white md:min-w-32 md:text-md text-xs">
                     {isLoading == false && latestBlock !== null
                       ? "New Block Mined!"
                       : "Loading Data..."}
@@ -212,7 +214,7 @@ export default function Component() {
                       className="whitespace-nowrap"
                     >
                       {isLoading == false && latestBlock !== null ? (
-                        <div className="inline-flex items-center h-14 px-6 gap-8">
+                        <div className="inline-flex items-center h-14 px-6 gap-8 md:text-md text-xs">
                           <span className="text-white font-semibold">
                             Height:{" "}
                             <span className="text-white font-light">
@@ -256,16 +258,16 @@ export default function Component() {
                           </span>
                         </div>
                       ) : (
-                        <div className="inline-flex items-center h-14 px-6 gap-8 text-white/80">
+                        <div className="inline-flex items-center h-14 px-6 gap-8 text-white/80 md:text-md text-xs">
                           <span>Fetching new blocks every 5 seconds...</span>
                         </div>
                       )}
                     </motion.div>
                   </AnimatePresence>
                 </div>
-                <div className="flex-shrink-0 border-l border-white/5 h-full flex items-center px-6 bg-gray-950/25">
+                <div className="flex-shrink-0 border-l border-white/5 h-full flex items-center px-6 bg-gray-950/25 md:text-md text-xs">
                   <span className="font-medium text-white">{currentTime}</span>
-                  <span className="relative flex h-3 w-3 ml-2">
+                  <span className="relative flex h-3 w-3 md:ml-2 ml-1">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75 duration-[1500ms]"></span>
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
                   </span>
@@ -277,10 +279,10 @@ export default function Component() {
           {/* Recent Blocks Section */}
           <Card className="backdrop-blur-sm bg-[#001214]/70 rounded-2xl border border-white/5 group hover:border-[#00E5CC]/30 transition-colors dark:bg-gray-800 px-4">
             <CardHeader>
-              <CardTitle className="text-3xl font-semibold text-white group-hover:text-[#00E5CC] transition-colors duration-300">
+              <CardTitle className="md:text-3xl text-lg font-semibold text-white group-hover:text-[#00E5CC] transition-colors duration-300">
                 Recent Blocks
               </CardTitle>
-              <CardDescription className="text-[#00E5CC] dark:text-gray-400">
+              <CardDescription className="text-[#00E5CC] text-xs md:text-md dark:text-gray-400">
                 Latest blocks added to the blockchain
               </CardDescription>
             </CardHeader>
@@ -288,7 +290,7 @@ export default function Component() {
               <div className="overflow-auto min-h-[20rem] max-h-[20rem]">
                 <Table>
                   <TableHeader>
-                    <TableRow className="sticky top-0 z-10 hover:bg-[#001214]/50">
+                    <TableRow className="sticky top-0 z-10 hover:bg-[#001214]/50 md:text-md text-xs">
                       <TableHead className="w-[5%] text-white">
                         Height
                       </TableHead>
@@ -313,7 +315,7 @@ export default function Component() {
                       <tr>
                         <td colSpan="7" className="text-center py-4">
                           <div className="flex justify-center items-center">
-                            <span className="text-white dark:text-gray-300">
+                            <span className="text-white dark:text-gray-300 md:text-md text-xs">
                               Loading blocks...
                             </span>
                           </div>
@@ -327,7 +329,7 @@ export default function Component() {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 0.3, delay: index * 0.1 }}
-                            className="text-[#00E5CC] hover:bg-[#001214]/50"
+                            className="text-[#00E5CC] hover:bg-[#001214]/50 md:text-md text-xs"
                           >
                             <TableCell className="text-center">
                               <span className="text-white">
@@ -359,10 +361,7 @@ export default function Component() {
                                 variant="outline"
                                 size="sm"
                                 onClick={() =>
-                                  openBlockDetails(
-                                    block,
-                                    block.blockHeight
-                                  )
+                                  openBlockDetails(block, block.blockHeight)
                                 }
                                 className="bg-black/0 border-white/0 transform text-md hover:scale-105 transition-all hover:bg-gray-800/0 hover:text-white dark:text-white dark:hover:bg-gray-700"
                               >

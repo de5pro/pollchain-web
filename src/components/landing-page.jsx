@@ -27,12 +27,12 @@ export function LandingPage() {
   }, []);
   return (
     <div className="min-h-screen bg-[#001A1E] bg-gradient-to-br from-[#001A1E] via-[#003644] to-[#002A35]">
-      <main className="container mx-auto px-4 pt-40">
-        <section className="text-center">
-          <h2 className="text-4xl md:text-6xl font-light mb-2 text-white">
+      <main className="container mx-auto px-4 pt-24 sm:pt-32 md:pt-40">
+        <section className="text-center max-w-4xl mx-auto">
+          <h2 className="text-3xl sm:text-4xl md:text-6xl font-light mb-2 text-white">
             Secure E-Voting
           </h2>
-          <span className="text-[#00E5CC] text-4xl md:text-6xl font-light">
+          <span className="text-[#00E5CC] text-3xl sm:text-4xl md:text-6xl font-light">
             For Your{" "}
             <TypeAnimation
               sequence={["University", 2000, "Election", 2000, "Company", 2000]}
@@ -41,35 +41,35 @@ export function LandingPage() {
               repeat={Infinity}
             />
           </span>
-          <p className="text-xl text-gray-300 mt-4 mb-12 text-center mx-auto">
+          <p className="text-lg sm:text-xl text-gray-300 mt-4 mb-8 sm:mb-12 text-center mx-auto max-w-2xl px-4">
             Experience the future of democracy with our cutting-edge, blockchain
             powered, tamper-proof voting system.
           </p>
           <Link
-            className="inline-flex items-center bg-[#00E5CC] text-[#001A1E] text-lg px-6 py-4 rounded-full hover:bg-[#00c4af] transition-colors hover:cursor-pointer"
+            className="inline-flex items-center bg-[#00E5CC] text-[#001A1E] text-base sm:text-lg px-5 sm:px-6 py-3 sm:py-4 rounded-full hover:bg-[#00c4af] transition-colors hover:cursor-pointer"
             href="/details"
           >
             Start Voting Now
-            <ChevronRight className="ml-2 h-5 w-5" />
+            <ChevronRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
           </Link>
         </section>
 
         {/* Services Section */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="backdrop-blur-sm bg-[#001214]/50 rounded-2xl p-12 xl:p-8 border border-white/5">
-            <div className="grid md:grid-cols-3 gap-16">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+          <div className="backdrop-blur-sm bg-[#001214]/50 rounded-xl sm:rounded-2xl p-6 sm:p-8 md:p-12 border border-white/5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-12 md:gap-16">
               <ServiceCard
-                icon={<Lock className="w-12 h-12" />}
+                icon={<Lock className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />}
                 title="Secure & Encrypted"
                 description="Your vote is protected by advanced cryptographic techniques."
               />
               <ServiceCard
-                icon={<Shield className="w-12 h-12" />}
+                icon={<Shield className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />}
                 title="Tamper-Proof"
                 description="Blockchain technology ensures the integrity of every vote cast."
               />
               <ServiceCard
-                icon={<Vote className="w-12 h-12" />}
+                icon={<Vote className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12" />}
                 title="Transparent"
                 description="Real-time results with full auditability for maximum trust."
               />
@@ -77,16 +77,16 @@ export function LandingPage() {
           </div>
         </section>
 
-        <section className="text-center py-24">
-          <h2 className="mb-4 text-5xl font-bold text-white">
+        <section className="text-center py-16 sm:py-20 md:py-24 px-4">
+          <h2 className="mb-4 text-3xl sm:text-4xl md:text-5xl font-bold text-white max-w-3xl mx-auto">
             Experience Real-Time Voting Analytics
           </h2>
-          <p className="text-xl text-gray-300 mb-8">
+          <p className="text-lg sm:text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
             Monitor live voting progress and results with our advanced analytics
             dashboard
           </p>
           <motion.div
-            className="mb-8 flex justify-center space-x-8"
+            className="mb-8 flex justify-center space-x-4 sm:space-x-6 md:space-x-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
@@ -94,7 +94,7 @@ export function LandingPage() {
             {icons.map((Icon, index) => (
               <motion.div
                 key={index}
-                className={`rounded-full bg-[#00E5CC] p-4 ${
+                className={`rounded-full bg-[#00E5CC] p-3 sm:p-4 ${
                   index === activeIcon ? "scale-125" : "scale-100 opacity-50"
                 }`}
                 animate={{
@@ -103,16 +103,16 @@ export function LandingPage() {
                 }}
                 transition={{ duration: 0.3 }}
               >
-                <Icon className="h-8 w-8 text-[#001A1E]" />
+                <Icon className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-[#001A1E]" />
               </motion.div>
             ))}
           </motion.div>
           <Link
-            className="inline-flex items-center bg-[#00E5CC] text-[#001A1E] text-lg px-8 py-4 rounded-full hover:bg-[#00c4af] transition-colors"
+            className="inline-flex items-center bg-[#00E5CC] text-[#001A1E] text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full hover:bg-[#00c4af] transition-colors"
             href="/live"
           >
             View Live Dashboard
-            <ChevronRight className="ml-2 h-5 w-5" />
+            <ChevronRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
           </Link>
         </section>
       </main>
@@ -123,11 +123,13 @@ export function LandingPage() {
 function ServiceCard({ icon, title, description }) {
   return (
     <div className="text-center group">
-      <div className="text-[#00E5CC] mb-6 flex justify-center">{icon}</div>
-      <h3 className="text-2xl font-light text-white mb-4 group-hover:text-[#00E5CC] transition-colors">
+      <div className="text-[#00E5CC] mb-4 sm:mb-6 flex justify-center">{icon}</div>
+      <h3 className="text-xl sm:text-2xl font-light text-white mb-2 sm:mb-4 group-hover:text-[#00E5CC] transition-colors">
         {title}
       </h3>
-      <p className="text-gray-400 leading-relaxed">{description}</p>
+      <p className="text-sm sm:text-base text-gray-400 leading-relaxed max-w-xs mx-auto">
+        {description}
+      </p>
     </div>
   );
 }
