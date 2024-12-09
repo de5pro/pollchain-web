@@ -1,7 +1,7 @@
 "use client";
 
-import { use, useState, useEffect, useMemo } from "react";
-import { Search, Moon, Sun, ChevronRight, X } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { Search, ChevronRight } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -9,7 +9,6 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -71,7 +70,12 @@ export default function Component() {
   useEffect(() => {
     const fetchBlocks = async () => {
       const response = await getAllBlocks();
-      setCurrentBlocks(response.blocks);
+      // Add blockHeight to each block, starting from 0
+      const blocksWithHeight = response.blocks.map((block, index) => ({
+        ...block,
+        blockHeight: index
+      }));
+      setCurrentBlocks(blocksWithHeight);
       setIsLoading(false);
     };
 
@@ -81,18 +85,21 @@ export default function Component() {
   useEffect(() => {
     const fetchLatestBlock = async () => {
       try {
-        // Fetch all blocks from the getAllBlocks function
         const response = await getAllBlocks();
         const blocks = response.blocks;
 
-        // Check if we have any blocks to compare
         if (blocks.length > 0) {
-          const lastBlock = blocks[blocks.length - 1];
+          const lastBlock = {
+            ...blocks[blocks.length - 1],
+            blockHeight: blocks.length - 1
+          };
 
-          // Check if this last block is different from the current latestBlock
           if (!latestBlock || lastBlock.timestamp !== latestBlock.timestamp) {
             setLatestBlock(lastBlock);
-            setCurrentBlocks(blocks);
+            setCurrentBlocks(blocks.map((block, index) => ({
+              ...block,
+              blockHeight: index
+            })));
           }
         }
       } catch (error) {
@@ -100,7 +107,6 @@ export default function Component() {
       }
     };
 
-    // Simulate fetching the latest block every 5 seconds
     const interval = setInterval(() => {
       fetchLatestBlock();
     }, 5000);
@@ -324,7 +330,9 @@ export default function Component() {
                             className="text-[#00E5CC] hover:bg-[#001214]/50"
                           >
                             <TableCell className="text-center">
-                              {currentBlocks.length - index - 1}
+                              <span className="text-white">
+                                {block.blockHeight}
+                              </span>
                             </TableCell>
                             <TableCell className="font-mono">
                               {truncateString(block.hash, 30, 20)}
@@ -353,7 +361,7 @@ export default function Component() {
                                 onClick={() =>
                                   openBlockDetails(
                                     block,
-                                    currentBlocks.length - index - 1
+                                    block.blockHeight
                                   )
                                 }
                                 className="bg-black/0 border-white/0 transform text-md hover:scale-105 transition-all hover:bg-gray-800/0 hover:text-white dark:text-white dark:hover:bg-gray-700"

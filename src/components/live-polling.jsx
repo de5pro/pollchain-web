@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import BlockExplorer from "@/components/block-explorer";
 import { getWalletBalance } from "@/actions/actions";
 import { Copy, Check } from "lucide-react";
-import { candidates } from "@/lib/data";
+import { candidates, polling } from "@/lib/data";
 
 const truncateString = (input, maxLength, limit) => {
   if (input.length <= limit) return input; // Only truncate if length exceeds limit
@@ -65,7 +65,7 @@ export default function LivePollingPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
         <div className="max-w-3xl mx-auto text-center mb-8">
           <h1 className="text-3xl font-light text-white">
-            Live Polling:
+            Live Polling: {polling.title}
             <br />
             <span className="font-semibold bg-gradient-to-r from-cyan-500 to-blue-200 bg-clip-text text-transparent text-5xl">
               Real-Time Polling Results
@@ -109,13 +109,11 @@ export default function LivePollingPage() {
                   <div
                     className="h-full bg-gradient-to-r from-cyan-500 to-[#00E5CC] transition-all duration-500 relative"
                     style={{
-                      width: `${((votes[index] || 0) / totalVotes) * 100}%`,
+                      width: totalVotes === 0 ? '0%' : `${((votes[index] || 0) / totalVotes) * 100}%`,
                     }}
                   >
                     <span className="absolute right-0 top-1/2 transform translate-x-14 -translate-y-1/2 text-[#00E5CC] text-md font-semibold">
-                      {`${(((votes[index] || 0) / totalVotes) * 100).toFixed(
-                        1
-                      )}%`}
+                      {totalVotes === 0 ? '0%' : `${(((votes[index] || 0) / totalVotes) * 100).toFixed(1)}%`}
                     </span>
                   </div>
                 </div>

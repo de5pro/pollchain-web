@@ -14,8 +14,11 @@ const geistMono = localFont({
 });
 
 export const metadata = {
-  title: "PollPal",
+  title: "PollPal: Unhackable vote, unlimited trust!",
   description: "Unhackable vote, unlimited trust!",
+  icons: {
+    icon: '/favicon.svg'
+  }
 };
 
 export default function RootLayout({ children }) {

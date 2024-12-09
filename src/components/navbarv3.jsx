@@ -73,7 +73,8 @@ export default function Navbar() {
                       <li key={item.name} className="flex items-center">
                         <Link
                           href={item.href}
-                          className="text-white hover:text-cyan-400 transition-all duration-500 text-sm font-light transform hover:scale-105"
+                          target={item.target}
+                          className="text-white hover:text-cyan-400 transition-all duration-500 text-sm font-light"
                         >
                           {item.name}
                         </Link>
