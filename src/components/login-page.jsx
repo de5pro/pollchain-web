@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertCircle, ChevronRight } from 'lucide-react'
+import { AlertCircle, ChevronRight, CircleOff } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/app/context/AuthContext'
@@ -54,8 +54,9 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[#001A1E] bg-gradient-to-br from-[#001A1E] via-[#003644] to-[#002A35] flex flex-col justify-center items-center p-4">
-      <Link href="/" className="mb-8">
-        <h1 className="text-4xl font-light text-white">PollPal</h1>
+      <Link href="/" className="mb-8 flex items-center space-x-2 text-white hover:text-cyan-400 transition-colors duration-500">
+        <CircleOff className="h-8 w-8" />
+        <h1 className="text-4xl font-light">PollPal</h1>
       </Link>
       
       <Card className="w-full max-w-md backdrop-blur-sm bg-[#001214]/50 border border-white/5 rounded-2xl">

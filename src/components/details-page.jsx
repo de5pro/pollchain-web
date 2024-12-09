@@ -12,6 +12,7 @@ import {
   Info,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { candidates, polling } from "@/lib/data";
 
 export default function DetailsPage() {
   const router = useRouter();
@@ -22,39 +23,29 @@ export default function DetailsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
         <div className="max-w-3xl mx-auto text-center mb-8">
           <h1 className="text-3xl font-light text-white">
-            User Opinion Poll:
+            {polling.header}
             <br />
             <span className="font-semibold bg-gradient-to-r from-cyan-500 to-blue-200 bg-clip-text text-transparent text-5xl">
-              Best Player in the World
+              {polling.title}
             </span>
           </h1>
           <p className="text-lg tracking-wide text-gray-400 pt-2">
-            Your voice matters. Participate in the most transparent and secure
-            polling experience.
+            {polling.description}
           </p>
         </div>
 
         {/* Candidates Section */}
         <section>
           <div className="grid md:grid-cols-3 gap-8">
-            <CandidateCard
-              name="Alex Johnson"
-              party="Progressive Party"
-              image="https://cdn.antaranews.com/cache/1200x800/2024/10/03/000_36J26WD.jpg"
-              description="Dedicated to environmental policies and social justice reforms."
-            />
-            <CandidateCard
-              name="Sam Rodriguez"
-              party="Centrist Alliance"
-              image="https://ichef.bbci.co.uk/ace/standard/3840/cpsprodpb/3a97/live/0dac61f0-d7a9-11ee-8f28-259790e80bba.jpg"
-              description="Focused on economic growth and bipartisan cooperation."
-            />
-            <CandidateCard
-              name="Jordan Lee"
-              party="Conservative Coalition"
-              image="https://static.independent.co.uk/2024/10/28/09/27-3c5ee0b831ca40e8843478fb62e81cd8.jpg"
-              description="Advocating for fiscal responsibility and traditional values."
-            />
+            {candidates.map((candidate) => (
+              <CandidateCard
+                key={candidate.id}
+                name={candidate.name}
+                subtitle={candidate.subtitle}
+                image={candidate.image}
+                description={candidate.description}
+              />
+            ))}
           </div>
         </section>
 
@@ -149,7 +140,7 @@ function DetailItem({ icon, label, children }) {
   );
 }
 
-function CandidateCard({ name, party, image, description }) {
+function CandidateCard({ name, subtitle, image, description }) {
   return (
     <div className="backdrop-blur-sm bg-[#001214]/50 rounded-2xl p-6 border border-white/5 group hover:border-[#00E5CC]/30 transition-colors">
       <div className="mb-4 overflow-hidden rounded-xl w-full h-[16rem]">
@@ -162,7 +153,7 @@ function CandidateCard({ name, party, image, description }) {
       <h3 className="text-2xl font-light text-white mb-2 group-hover:text-[#00E5CC] transition-colors">
         {name}
       </h3>
-      <p className="text-[#00E5CC] mb-4">{party}</p>
+      <p className="text-[#00E5CC] mb-4">{subtitle}</p>
       <p className="text-gray-400 leading-relaxed">{description}</p>
     </div>
   );
