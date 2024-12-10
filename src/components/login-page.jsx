@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import * as React from "react"
+import { useState, useRef} from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -20,24 +21,66 @@ import {
 } from "@/components/ui/alert-dialog"
 
 export default function LoginPage() {
-  const [npm, setNpm] = useState('')
-  const [password, setPassword] = useState('')
+  const [npm, setNpm] = useState(Array(10).fill(""));
+  const [pin, setPin] = useState(Array(6).fill(""));
+  const npmInputRefs = useRef(npm.map(() => React.createRef()));
+  const pinInputRefs = useRef(pin.map(() => React.createRef()));
+
   const [error, setError] = useState('')
   const [showDialog, setShowDialog] = useState(false)
   const [userInfo, setUserInfo] = useState(null)
   const { login } = useAuth()
   const router = useRouter()
 
+  const handleNpmChange = (index, value) => {
+    const newNpm = [...npm];
+    const sanitizedValue = value.toUpperCase().replace(/[^0-9]/g, '').slice(0, 1);
+    newNpm[index] = sanitizedValue;
+    setNpm(newNpm);
+
+    // Move focus to next input if current input is filled
+    if (sanitizedValue && index < 9) {
+      npmInputRefs.current[index + 1].current.focus();
+    }
+  };
+
+
+  const handlePinChange = (index, value) => {
+    const newPin = [...pin];
+    const sanitizedValue = value.replace(/[^0-9]/g, '').slice(0, 1);
+    newPin[index] = sanitizedValue;
+    setPin(newPin);
+
+    // Move focus to next input if current input is filled
+    if (sanitizedValue && index < 5) {
+      pinInputRefs.current[index + 1].current.focus();
+    }
+  };
+
+  const handleNpmKeyDown = (index, e) => {
+    // Handle backspace to move focus to previous input
+    if (e.key === 'Backspace' && !npm[index] && index > 0) {
+      npmInputRefs.current[index - 1].current.focus();
+    }
+  };
+
+  const handlePinKeyDown = (index, e) => {
+    // Handle backspace to move focus to previous input
+    if (e.key === 'Backspace' && !pin[index] && index > 0) {
+      pinInputRefs.current[index - 1].current.focus();
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
 
-    if (!npm || !password) {
+    if (!npm || !pin) {
       setError('Please fill in all fields')
       return
     }
 
-    const user = await login(npm, password)
+    const user = await login(npm.join(''), pin.join(''))
     if (!user) {
       setError('Invalid credentials')
       return
@@ -59,7 +102,7 @@ export default function LoginPage() {
         <h1 className="text-4xl font-light">PollPal</h1>
       </Link>
       
-      <Card className="w-full max-w-md backdrop-blur-sm bg-[#001214]/50 border border-white/5 rounded-2xl">
+      <Card className="w-fill backdrop-blur-sm bg-[#001214]/50 border border-white/5 rounded-2xl">
         <CardHeader>
           <CardTitle className="text-3xl font-light text-center text-white">Check your registration status</CardTitle>
         </CardHeader>
@@ -67,23 +110,36 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label className="text-gray-300">NPM (Student ID)</Label>
-              <Input 
-                type="text" 
-                placeholder="Enter your NPM" 
-                value={npm}
-                onChange={(e) => setNpm(e.target.value)}
-                className="bg-[#002A35] border-[#00E5CC]/20 text-white focus:border-[#00E5CC] focus:ring-[#00E5CC]"
-              />
+              <div className="flex space-x-1">
+              {npm.map((digit, index) => (
+                  <Input 
+                    key={index} 
+                    ref={npmInputRefs.current[index]}
+                    value={digit}
+                    onChange={(e) => handleNpmChange(index, e.target.value)}
+                    onKeyDown={(e) => handleNpmKeyDown(index, e)}
+                    maxLength={1}
+                    className="w-10 text-center text-white bg-[#001A1E] border-[#00E5CC]/30 focus:border-[#00E5CC]" 
+                  />
+                ))}
+                </div>
             </div>
             <div className="space-y-2">
               <Label className="text-gray-300">PIN</Label>
-              <Input 
-                type="password" 
-                placeholder="Enter your PIN"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="bg-[#002A35] border-[#00E5CC]/20 text-white focus:border-[#00E5CC] focus:ring-[#00E5CC]"
-              />
+              <div className="flex space-x-1">
+              {pin.map((digit, index) => (
+                  <Input 
+                    key={index} 
+                    ref={pinInputRefs.current[index]}
+                    // type="password"
+                    value={digit}
+                    onChange={(e) => handlePinChange(index, e.target.value)}
+                    onKeyDown={(e) => handlePinKeyDown(index, e)}
+                    maxLength={1}
+                    className="w-10 text-center text-white bg-[#001A1E] border-[#00E5CC]/30 focus:border-[#00E5CC]" 
+                  />
+                ))}
+                </div>
             </div>
             {error && (
               <div className="text-red-400 flex items-center space-x-2">

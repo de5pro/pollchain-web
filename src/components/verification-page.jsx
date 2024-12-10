@@ -45,6 +45,8 @@ export default function VerificationPage() {
         if (resp.status === 200) {
           setTimeout(() => router.push('/private-key'), 5000)
         } 
+
+        setTimeout(() => router.push('/private-key'), 2000)
       }
     ).catch((err) => {
         console.log(err)
@@ -101,7 +103,6 @@ export default function VerificationPage() {
   }
 
   useEffect(() => {
-    handleModeChange('npm')
     const client = mqtt.connect(MQTT_BROKER_URL, {
       username: process.env.NEXT_PUBLIC_MQTT_USERNAME,
       password: process.env.NEXT_PUBLIC_MQTT_PASSWORD,
@@ -226,7 +227,7 @@ export default function VerificationPage() {
           <div className="space-y-6">
             <div className="space-y-2">
               <Label className="text-gray-300">NPM (10 Digits)</Label>
-              <div className="flex space-x-1 justify-center">
+              <div className="flex space-x-1">
                 {npm.map((digit, index) => (
                   <Input 
                     key={index} 
@@ -241,7 +242,7 @@ export default function VerificationPage() {
             {npm.every((digit) => digit !== "") && (
               <div className="space-y-2">
                 <Label className="text-gray-300">6-Digit PIN</Label>
-                <div className="flex space-x-1 justify-center">
+                <div className="flex space-x-1">
                   {pin.map((digit, index) => (
                     <Input 
                       key={index} 
