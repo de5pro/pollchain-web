@@ -60,25 +60,25 @@ export default function LivePollingPage() {
   }, []);
 
   return (
-    <div className="min-h-screen pt-20 sm:pt-24 pb-12 sm:pb-16 bg-[#001A1E] bg-gradient-to-br from-[#001A1E] via-[#003644] to-[#002A35]">
+    <div className="min-h-screen px-4 md:px-0 pt-20 sm:pt-24 pb-12 sm:pb-16 bg-[#001A1E] bg-gradient-to-br from-[#001A1E] via-[#003644] to-[#002A35]">
       {/* Title Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+      <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 pt-4">
         <div className="max-w-3xl mx-auto text-center mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-light text-white">
+          <h1 className="text-xl sm:text-3xl font-light text-white">
             Live Polling: {polling.title}
             <br />
             <span className="font-semibold bg-gradient-to-r from-cyan-500 to-blue-200 bg-clip-text text-transparent text-3xl sm:text-4xl md:text-5xl mt-2">
               Real-Time Polling Results
             </span>
           </h1>
-          <p className="text-base sm:text-lg tracking-wide text-gray-400 pt-2">
+          <p className="text-xs px-8 md:px-0 sm:text-lg tracking-wide text-gray-400 pt-2">
             Track and engage with live polling results in real-time. Every vote
             counts.
           </p>
         </div>
 
         {/* Candidates Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 px-4 md:px-0 lg:gap-8 mb-6 sm:mb-12 lg:mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-8 mb-6 sm:mb-12 lg:mb-16">
           {candidates.map((candidate, index) => (
             <CandidateCard
               key={index}
@@ -93,7 +93,7 @@ export default function LivePollingPage() {
         </div>
 
         {/* Vote Distribution Section */}
-        <div className="backdrop-blur-sm bg-[#001214]/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 border border-white/5 group hover:border-[#00E5CC]/30 transition-colors mx-4 md:mx-0">
+        <div className="backdrop-blur-sm bg-[#001214]/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 border border-white/5 group hover:border-[#00E5CC]/30 transition-colors">
           <h2 className="text-2xl sm:text-3xl font-semibold text-white mb-6 sm:mb-8 group-hover:text-[#00E5CC] transition-colors duration-300">
             Vote Distribution
           </h2>
@@ -104,7 +104,7 @@ export default function LivePollingPage() {
                 className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4"
               >
                 <div className="sm:w-32 text-left sm:text-right">
-                  <span className="text-gray-300 font-medium text-sm sm:text-md">
+                  <span className="text-gray-300 font-medium text-sm sm:text-base">
                     {candidate.name}
                   </span>
                 </div>
@@ -119,7 +119,7 @@ export default function LivePollingPage() {
                     }}
                   />
                   <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:pr-4">
-                    <span className="text-[#00E5CC] text-sm sm:text-md font-semibold ml-2">
+                    <span className="text-[#00E5CC] text-sm sm:text-base font-semibold ml-2">
                       {totalVotes === 0
                         ? "0%"
                         : `${(((votes[index] || 0) / totalVotes) * 100).toFixed(
@@ -132,7 +132,7 @@ export default function LivePollingPage() {
                   <span className="text-white font-sans font-semibold text-base sm:text-lg">
                     {votes[index] || 0}
                   </span>
-                  <span className="text-[#00E5CC] font-semibold text-sm sm:text-md mt-[0.15rem]">
+                  <span className="text-[#00E5CC] font-semibold text-sm sm:text-base mt-[0.15rem]">
                     Votes
                   </span>
                 </div>
