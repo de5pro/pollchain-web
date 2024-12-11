@@ -79,14 +79,14 @@ export default function InputPrivateKey() {
   }
 
   return (
-    <div className="min-h-screen bg-[#001A1E] bg-gradient-to-br from-[#001A1E] via-[#003644] to-[#002A35]">
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
-        <h1 className="text-4xl font-light text-white mb-12 text-center">
+    <div className="h-screen bg-[#001A1E] bg-gradient-to-br from-[#001A1E] via-[#003644] to-[#002A35] flex items-center justify-center">
+      <main className="max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-32">
+        <h1 className="text-4xl font-light text-white mb-4 text-center">
           Input Private Key
         </h1>
 
         <div className="backdrop-blur-sm bg-[#001214]/50 rounded-2xl p-6 border border-white/5">
-          <h2 className="text-2xl font-light text-white mb-4">
+          <h2 className="text-2xl font-light text-white">
             Scan Private Key
           </h2>
           {scanResult ? (
