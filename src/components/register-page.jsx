@@ -134,21 +134,21 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#001A1E] bg-gradient-to-br from-[#001A1E] via-[#003644] to-[#002A35] flex flex-col justify-center items-center p-4">
+    <div className="min-h-screen bg-[#001A1E] bg-gradient-to-br from-[#001A1E] via-[#003644] to-[#002A35] flex flex-col justify-center items-center p-4 md:p-8">
       <Link href="/" className="mb-4 flex items-center space-x-2 text-white hover:text-cyan-400 transition-colors duration-500">
-        <CircleOff className="h-8 w-8" />
-        <h1 className="text-4xl font-light">PollPal</h1>
+        <CircleOff className="h-6 w-6 md:h-8 md:w-8" />
+        <h1 className="text-2xl md:text-4xl font-light">PollPal</h1>
       </Link>
       
-      <Card className="w-fill max-w-lg backdrop-blur-sm bg-[#001214]/50 border border-white/5 rounded-2xl">
+      <Card className="w-full md:max-w-xl backdrop-blur-sm bg-[#001214]/50 border border-white/5 rounded-2xl">
         <CardHeader>
-          <CardTitle className="text-3xl font-light text-center text-white">Create Your Account</CardTitle>
+          <CardTitle className="text-2xl md:text-3xl font-light text-center text-white">Create Your Account</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label className="text-gray-300">NPM (Student ID)</Label>
-              <div className="flex space-x-1">
+              <div className="flex flex-wrap gap-1 md:gap-2">
               {npm.map((digit, index) => (
                   <Input 
                     key={index} 
@@ -157,7 +157,7 @@ export default function RegisterPage() {
                     onChange={(e) => handleNpmChange(index, e.target.value)}
                     onKeyDown={(e) => handleNpmKeyDown(index, e)}
                     maxLength={1}
-                    className="w-10 text-center text-white bg-[#001A1E] border-[#00E5CC]/30 focus:border-[#00E5CC]" 
+                    className="w-7 md:w-10 text-center text-white bg-[#001A1E] border-[#00E5CC]/30 focus:border-[#00E5CC]" 
                   />
                 ))}
                 </div>
@@ -174,17 +174,16 @@ export default function RegisterPage() {
             </div>
             <div className="space-y-2">
               <Label className="text-gray-300">PIN</Label>
-              <div className="flex space-x-1">
+              <div className="flex flex-wrap gap-1 md:gap-2">
               {pin.map((digit, index) => (
                   <Input 
                     key={index} 
                     ref={pinInputRefs.current[index]}
-                    // type="password"
                     value={digit}
                     onChange={(e) => handlePinChange(index, e.target.value)}
                     onKeyDown={(e) => handlePinKeyDown(index, e)}
                     maxLength={1}
-                    className="w-10 text-center text-white bg-[#001A1E] border-[#00E5CC]/30 focus:border-[#00E5CC]" 
+                    className="w-8 md:w-10 text-center text-white bg-[#001A1E] border-[#00E5CC]/30 focus:border-[#00E5CC]" 
                   />
                 ))}
                 </div>
@@ -200,6 +199,15 @@ export default function RegisterPage() {
                   </div>
                 )}
               </div>
+              <div 
+                onClick={triggerFileInput}
+                className="mt-2 p-2 md:p-4 border-2 border-dashed border-[#00E5CC]/30 rounded-lg cursor-pointer hover:border-[#00E5CC]/50 transition-colors duration-300"
+              >
+                <div className="flex flex-col items-center space-y-2 text-gray-400">
+                  <Upload className="h-6 w-6 md:h-8 md:w-8" />
+                  <span className="text-sm md:text-base">Click to upload a new photo</span>
+                </div>
+              </div>
               <input
                 type="file"
                 accept="image/*"
@@ -207,13 +215,6 @@ export default function RegisterPage() {
                 className="hidden"
                 ref={fileInputRef}
               />
-              <Button
-                type="button"
-                onClick={triggerFileInput}
-                className="w-full bg-[#00E5CC] text-[#001A1E] hover:bg-[#00c4af] transition-colors"
-              >
-                <Upload className="mr-2 h-4 w-4" /> Upload Photo
-              </Button>
             </div>
             {error && (
               <div className="text-red-400 flex items-center space-x-2">
@@ -223,9 +224,9 @@ export default function RegisterPage() {
             )}
             <Button 
               type="submit" 
-              className="w-full bg-[#00E5CC] text-[#001A1E] hover:bg-[#00c4af] transition-colors"
+              className="w-full bg-[#00E5CC] hover:bg-[#00E5CC]/80 text-[#001A1E] font-medium py-2 md:py-4 rounded-lg transition-colors duration-300"
             >
-              Register
+              Create Account
               <ChevronRight className="ml-2 h-5 w-5" />
             </Button>
           </form>
